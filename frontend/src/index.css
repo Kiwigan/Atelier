@@ -84,6 +84,33 @@
   box-shadow: var(--shadow-4);
 }
 
+.secondary-btn{
+  display: inline-block;
+  font-size: 13px;
+  text-transform: uppercase;
+  min-width: 110px;
+  height: 42px;
+  line-height: 40px;
+  background-color: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-weight: 500;
+  text-align: center;
+  padding: 0 15px;
+  cursor: pointer;
+  transition: all .25s linear 0s;
+  -webkit-transition: all .25s linear 0s;
+}
+
+.secondary-btn:hover{
+  background-color: var(--primary);
+  color: #fff;
+}
+
+a{
+  text-decoration: none;
+  background-color: transparent;
+}
 header{
   background-color: var(--primary-light);
 }
@@ -166,38 +193,37 @@ ul{
   list-style-type: none;
   }
 
+.col, .col-2, .col-3, .col-4, .col-6, .col-8, .col-9, .col-12{
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
 .col{
   flex-basis: 50%;
-  flex: 0 0 auto;
   min-width: 300px;
 }
+.col-2{
+  width: 16.66666%;
+}
 .col-3{
-  flex: 0 0 auto;
   width: 25%;
 }
-
 .col-4{
-  flex: 0 0 auto;
   width: 33.3333%;
 }
-
 .col-6{
-  flex: 0 0 auto;
   width: 50%;
 }
-
 .col-8{
-  flex: 0 0 auto;
   width: 66.6666%;
 }
-
 .col-9{
-  flex: 0 0 auto;
   width: 75%;
 }
-
 .col-12{
-  flex: 0 0 auto;
   width: 100%;
 }
 
@@ -225,6 +251,7 @@ img{
   background-color: #f7f7f7;
 }
 
+/*===== BEST SELLERS =====*/
 
 .title_heading {
   /*font-family: Jost;*/
@@ -250,6 +277,28 @@ img{
   bottom: 0;
 }
 
+.card-body{
+  text-align: center;
+}
+
+.card-title{
+  font-size: 16px;
+  font-weight: 500;
+  padding-top: 20px;
+  padding-bottom: 5px;
+  text-align: center;
+  line-height: 1.2em;
+}
+
+.card-price{
+  font-size: 15px;
+  font-weight: 700;
+  padding-top: 5px;
+}
+
+.ratings i {
+  color: var(--primary);
+}
 
 
 /*===== FOOTER =====*/
