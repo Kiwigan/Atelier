@@ -90,7 +90,6 @@
   font-size: 16px;
   line-height: 20px;
   border-radius: 4px;
-  padding: 12px 150px;
   letter-spacing: 0.08em;
   border: 1px solid transparent;
   text-transform: uppercase;
@@ -190,13 +189,17 @@ ul{
   display: block;
   list-style-type: disc;
   margin-block-start: 1em;
-  /*margin-block-end: 1em;*/
+  margin-block-end: 1em;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
   padding-inline-start: 0px;
   unicode-bidi: isolate;
   list-style-type: none;
   }
+
+ul li label{
+  padding-left: 10px;
+}
 
 /*---------ROWS-------------*/
   .row{
@@ -244,7 +247,7 @@ ul{
 .col-9{
   width: 75%;
 }
-.co1-10{
+.col-10{
   width: 83.3333%;
 }
 .col-12{
@@ -318,6 +321,10 @@ img{
   font-size: 15px;
   font-weight: 700;
   padding-top: 5px;
+}
+
+.card{
+  padding-bottom: 30px;
 }
 
 .ratings i {
