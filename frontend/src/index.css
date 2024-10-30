@@ -76,12 +76,27 @@
   letter-spacing: 0.08em;
   border: 1px solid transparent;
   text-transform: uppercase;
-  margin-top: 10px;
 }
 .active.primary-btn, .primary-btn:hover, .primary-btn:focus {
   background: var(--primary-dark);
   color: var(--white);
   box-shadow: var(--shadow-4);
+}
+
+.btn-case{
+  width: 100%;
+}
+
+.addtocart-btn {
+  width: 100%;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 20px;
+  border-radius: 4px;
+  padding: 12px 24px;
+  letter-spacing: 0.08em;
+  border: 1px solid transparent;
+  text-transform: uppercase;
 }
 
 .secondary-btn{
@@ -173,13 +188,6 @@ header{
 }
 
 
-.row{
-  display:flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: space-between;
-
-}
 
 ul{
   display: block;
@@ -193,7 +201,17 @@ ul{
   list-style-type: none;
   }
 
-.col, .col-2, .col-3, .col-4, .col-6, .col-8, .col-9, .col-12{
+/*---------ROWS-------------*/
+  .row{
+    display:flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  
+  }
+
+/*---------COLUMNS-------------*/
+.col, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-12{
   position: relative;
   flex: 0 0 auto;
   min-height: 1px;
@@ -206,7 +224,7 @@ ul{
   min-width: 300px;
 }
 .col-2{
-  width: 16.66666%;
+  width: 16.6666%;
 }
 .col-3{
   width: 25%;
@@ -214,14 +232,23 @@ ul{
 .col-4{
   width: 33.3333%;
 }
+.col-5{
+  width: 41.66666%;
+}
 .col-6{
   width: 50%;
+}
+.col-7{
+  width: 58.33333%;
 }
 .col-8{
   width: 66.6666%;
 }
 .col-9{
   width: 75%;
+}
+.co1-10{
+  width: 83.3333%;
 }
 .col-12{
   width: 100%;
@@ -300,6 +327,19 @@ img{
   color: var(--primary);
 }
 
+
+/*===== Product Details =====*/
+#sold-no, #hour-no{
+  color: var(--primary);
+}
+
+input {
+  width: 43px;
+  height: 35px;
+  padding-left: 10px;
+  font-size: 15px;
+  margin-right: 10px;
+}
 
 /*===== FOOTER =====*/
 .f-download {
