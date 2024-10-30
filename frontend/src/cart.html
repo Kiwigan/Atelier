@@ -18,8 +18,8 @@
     <section>
         <div class="container" style="padding-top: 50px;">
             <div class="row">
-                <div class="col-7">
-                    <h2>Your Cart</h2>
+                <div class="col-8">
+                    <h2 class="title_heading-2">Your Cart &nbsp;&boxh;&boxh;&boxh;&boxh;&boxh;&boxh;</h2>
                     <h5>Not ready to checkout? Continue Shopping</h5>
 
                     <table style="width: 100%; margin-top: 30px; margin-bottom: 30px;">
@@ -30,6 +30,7 @@
                             <th style="width: 20%;">Subtotal</th>
                             <td style="width: 10%;"></td>
                         </tr>
+                        <!--Cart Item-->
                         <tr>
                             <td style="width: 20px;">
                                 <img src="./assets/images/product1.jpg" alt="image1">
@@ -46,47 +47,56 @@
                             <td style="width: 20%;">
                                 <h5 class="cart-subtotal">$20.00</h5>
                             </td>
-                            <td>
-                                <i class="bi bi-x"></i>
+                            <td style="text-align: center;">
+                                <a href="#" class="remove-cross">
+                                    <i class="bi bi-x-lg"></i>
+                                </a>
                             </td>
                         </tr>
-                        <!--tr>
-                            <td><img src="./assets/images/product2.jpg" alt="image2"></td>
+                        <!--Cart Item End-->
+                        <!--Cart Item-->
+                        <tr>
+                            <td style="width: 20px;">
+                                <img src="./assets/images/product5.jpg" alt="image5">
+                            </td>
                             <td>
-                                <h4>
-                                    <b>Gucci</b>
-                                </h4>
-                                <div>
-                                    <h5>Quantity</h5>
+                                <h5 class="cart-title">Le Male Le Pefume</h5>
+                                <h5 class="cart-price">$20.00</h5>
+                            </td>
+                            <td>
+                                <div class="row">
                                     <input type="number" name="quantity" value="1" class="quantityfield" style="width: 50px; height: 30px; padding-right: 0px;">
                                 </div>
-                                <b>
-                                    <h3>$20.00</h3>
-                                </b>
                             </td>
-                            <td>
-                                remove
+                            <td style="width: 20%;">
+                                <h5 class="cart-subtotal">$20.00</h5>
                             </td>
-                        </tr-->
+                            <td style="text-align: center;">
+                                <a href="#" class="remove-cross">
+                                    <i class="bi bi-x-lg"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <!--Cart Item End-->
                     </table>
                 </div>
-                <div class="col-5" style="padding-left: 100px;">
-                    <h2 style="padding-bottom: 10px;">Order Summary</h2>
-                    <input type="text" placeholder="Enter coupon code here" style="width: 100%; padding: 5px; margin-bottom: 10px;">
+                <div class="col-4" style="padding-left: 100px;">
+                    <h2 style="padding-bottom: 15px;">Order Summary</h2>
+                    <input type="text" placeholder="Enter coupon code here" style="width: 100%; padding: 5px; margin-bottom: 15px;">
                     <div class="row" style="justify-content: space-between; padding-top: 5px;">
                         <h5>Subtotal</h5>
                         <h5>$140.00</h5>
                     </div>
-                    <div class="row" style="justify-content: space-between; padding-top: 5px; padding-bottom: 5px;">
+                    <div class="row" style="justify-content: space-between; padding-top: 8px; padding-bottom: 8px;">
                         <h5>Shipping</h5>
                         <h5>$10.00</h5>
                     </div>
                     <hr>
-                    <div class="row" style="justify-content: space-between; padding-top: 5px;">
+                    <div class="row" style="justify-content: space-between; padding-top: 8px;">
                         <h5>Total</h5>
                         <h5>$150.00</h5>
                     </div>
-                    <button type="submit" class="primary-btn addtocart-btn" value="Continue to checkout" style="margin-top: 10px;">Continue to checkout</button>
+                    <button type="submit" class="primary-btn addtocart-btn" value="Continue to checkout" style="margin-top: 15px;">Continue to checkout</button>
                 </div>
             </div>
         </div>

@@ -23,7 +23,7 @@
   --primary: #C89D65;
   --primary-dark: #a7732f;
   --primary-light: #cacaca;
-
+  --base: #212427;
   --accent: #00d4d7;
   --accent-dark: #00bac1;
   --accent-light: #dff9f8;
@@ -304,6 +304,17 @@ img{
   bottom: 0;
 }
 
+.title_heading-2 {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 10px;
+}
+
 .card-body{
   text-align: center;
 }
@@ -366,6 +377,16 @@ table{
 .cart-subtotal{
   color: var(--primary);
   font-size: 17px;
+}
+
+.remove-cross{
+  color: var(--base);
+  transition: all 0.3s ease-out 0s;
+}
+
+
+.remove-cross:hover{
+  color: var(--primary);
 }
 
 /*===== FOOTER =====*/
