@@ -56,6 +56,10 @@
   --white: #ffffff;
 }
 
+.hero1{
+  background-image: url(./assets/images/hero_banner_5.jpg);
+}
+
 .container {
   position: relative;
   margin: 0 auto;
@@ -128,6 +132,26 @@ header{
 
 .justify-content-center{
   justify-content: center;
+}
+
+header {
+  position: relative;
+  background-color: transparent;
+  transition: transform 0.6s ease, background-color 0.6s ease;
+}
+
+header.sticky {
+  position: fixed;
+  background-color: white;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  transform: translateY(0); /* Visible */
+}
+
+header.hidden {
+  transform: translateY(-100%); /* Hidden */
 }
 
 .navbar {
@@ -273,10 +297,11 @@ input:focus{
 .hero{
   background-image: url(./assets/images/hero_banner_3.jpg);
   background-size: cover; /* Ensures the image covers the entire area */
-  background-position: center; /* Centers the image */
+  background-position: center;  /*Centers the image */
   background-repeat: no-repeat; /* Prevents the image from tiling */
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 

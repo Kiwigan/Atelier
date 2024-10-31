@@ -14,10 +14,34 @@
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
 
     <title>My Home Page</title>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+          const header = document.querySelector("header");
+          let lastScrollTop = 0;
+    
+          window.addEventListener("scroll", function() {
+            let scrollTop = window.scrollY;
+    
+            if (scrollTop > 0) {
+              header.classList.add("sticky");
+              if (scrollTop >= lastScrollTop) {
+                header.classList.add("hidden"); // Scroll down - hide
+              } else {
+                header.classList.remove("hidden"); // Scroll up - show
+              }
+            } else {
+              header.classList.remove("sticky", "hidden"); // Reset at top
+            }
+            
+            lastScrollTop = scrollTop;
+          });
+        });
+      </script>
 </head>
 <body>
     <section>
-        <header>
+        <header class="header">
             <div class="container">
                 <nav class="navbar">
                     <div class="logo">
@@ -49,7 +73,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-6">
-                    <img src="assets/images/hero.png">
+                    <img src="assets/images/hero2.png" style="padding-top: 80px;">
                 </div>
                 <div class="col-6">
                     <h1>Welcome,<br>Keegan</h1>
