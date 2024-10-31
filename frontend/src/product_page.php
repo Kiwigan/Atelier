@@ -78,6 +78,7 @@
                         if ($result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
                                 // Wrap each product card in an <a> tag
+                                
                                 echo "<a href='product_details.php?product_id=" . $row['product_id'] . "' style='text-decoration: none; color: inherit;'>";
 
                                 echo "<div class='product-card'>";
