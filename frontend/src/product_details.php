@@ -14,10 +14,10 @@ if ($conn->connect_error) {
 
 // Check if product_id is in the URL
 if (isset($_GET['product_id'])) {
-    $product_id = intval($_GET['product_id']);
+    $url_product_id = intval($_GET['product_id']);
     
     // Fetch product details
-    $sql = "SELECT * FROM perfumes WHERE product_id = $product_id";
+    $sql = "SELECT * FROM perfumes WHERE product_id = $url_product_id";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -31,6 +31,35 @@ if (isset($_GET['product_id'])) {
     exit;
 }
 
+//Process form add to cart submission
+if (isset($_POST['add_to_cart'])) {
+    // Retrieve product details from form
+    $form_product_id = $_POST['product_id'];
+    $quantity = $_POST['quantity'];
+    $product_price = $_POST['product_price'];
+    $total_price = $quantity * $product_price;
+
+    // Insert the data into the cart table
+    $sql = "INSERT INTO cart (product_id, quantity, total_price, added_at) VALUES (?, ?, ?, NOW())";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iid", $form_product_id, $quantity, $total_price);
+
+    if ($stmt->execute()) {
+        // Success message with JavaScript alert, Returns to same page after a 0.2second delay
+        echo "<script>
+            alert('Item successfully added to cart!');
+            window.location.href = 'product_page.php?product_id=" . $form_product_id . "';
+          </script>";
+
+        exit(); // End script to prevent further execution
+    } else {
+        // Error message with JavaScript alert
+        echo "<script>alert('Error adding item to cart: " . $conn->error . "');</script>";
+    }
+
+    $stmt->close();
+}
+
 $conn->close();
 ?>
 
@@ -42,41 +71,198 @@ $conn->close();
     <title><?php echo $product['product_name']; ?> - Details</title>
     <link rel="stylesheet" href="index.css">
 </head>
-<body>
-    <section>
-            <div class="container">
-                <div class="row">
-                    <div class="col-7" style="padding-right: 80px; display: flex; justify-content: center;">
-                        <img src="<?php echo $product['product_image']; ?>" alt="<?php echo $product['product_name']; ?>" class="product-detail-image">
-                    </div>
-                    <div class="col-5">
-                        <h1><?php echo $product['product_name']; ?></h1> 
-                        <h4>$<?php echo number_format($product['product_price'], 2); ?></h4>
-                        <br><br>
-                        <hr>
-                        <p style="padding-top: 30px; padding-bottom: 30px;"><?php echo $product['product_details']; ?></p>
-                        <p>Rating: <?php echo $product['product_rating']; ?> / 5</p>
 
-                        <b>
-                            <span id="sold-no">17</span>
-                            sold in last
-                            <span id="hour-no">24</span>
-                            Hour
-                        </b>
+<body>
+    <!--HEADER SECTION-->
+    <section>
+        <header>
+            <div class="container">
+                <nav class="navbar">
+                    <div class="logo">
+                    <a href="#">
+                        <img src="./assets/logos/logo.png" alt="companylogo" height="70" width="100">
+                    </a>
+                    </div>
+                    <div class="nav-items">
+                        <a href="home.html">Home</a>
+                        <a href="#">About</a>
+                        <a href="product_page.php">Products</a>
+                        <a href="#">Contact Us</a>
+                    </div>
+                    <div class="icon-items">
+                        <a href="#"><img src="./assets/icons/search.png" height="27"></a>
+                        <a href="#"><img src="./assets/icons/profile.png" height="30"></a>
+                        <a href="cart.php"><img src="./assets/icons/cart.png" height="30"></a>
+
+                    </div>
+                </nav>
+            </div>
+        </header>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-7" style="padding-right: 80px; display: flex; justify-content: center;">
+                    <img src="<?php echo $product['product_image']; ?>" alt="<?php echo $product['product_name']; ?>" class="product-detail-image">
+                </div>
+                <div class="col-5">
+                    <h1><?php echo $product['product_name']; ?></h1> 
+                    <h4>$<?php echo number_format($product['product_price'], 2); ?></h4>
+                    <br><br>
+                    <hr>
+                    <p style="padding-top: 30px; padding-bottom: 30px;"><?php echo $product['product_details']; ?></p>
+                    <p>Rating: <?php echo $product['product_rating']; ?> / 5</p>
+
+                    <b>
+                        <span id="sold-no">17</span>
+                        sold in last
+                        <span id="hour-no">24</span>
+                        Hour
+                    </b>
+
+                    <form action="" method="POST">
+                        <input type="hidden" name="product_id" value="<?php echo $url_product_id; ?>">
+                        <input type="hidden" name="product_price" value="<?php echo $product['product_price']; ?>">
 
                         <div class="row" style="padding-top: 30px;">
                             <div class="col-2" style="display: flex; flex-wrap: wrap;">
-                                <input type="number" name="quantity" value="1" class="quantityfield">
+                                <input type="number" name="quantity" value="1" min="1" class="quantityfield">
                             </div>
                             <div class="col-10" style="display: flex; flex-wrap: wrap;">
-                                <button type="submit" class="primary-btn addtocart-btn" value="Add to Cart">
+                                <button type="submit" name="add_to_cart" class="primary-btn addtocart-btn" value="Add to Cart">
                                     Add to Cart
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
+
+    <!--FOOTER SECTION-->
+    <section>
+        <footer class="footer-area footer-one">
+            <div class="footer-widget">
+            <div class="container">
+                <div class="row">
+                    <div class="f-download">
+                        <div class="f-about">
+                        <div class="footer-logo">
+                            <a href="#">
+                            <img src="./assets/logos/logo.png" alt="Logo" width="20%"/>
+                            </a>
+                        </div>
+                        <p class="text">
+                                Maximizing Profits, Ensuring Compliance — <br>
+                                Your Trusted Partner in Accounting and Advisory
+                        </p>
+                        </div>
+                        <div class="footer-app-store">
+                        <h5 class="download-title">Download Our App Now!</h5>
+                        <ul>
+                            <li>
+                                <img src="https://cdn.ayroui.com/1.0/images/footer/app-store.svg" alt="app"/>
+                            </li>
+                            <li>
+                                <img src="https://cdn.ayroui.com/1.0/images/footer/play-store.svg" alt="play"/>
+                            </li>
+                        </ul>
+                        </div>
+                    </div>
+                    <div class="f-company">
+                        <div class="footer-link">
+                        <h6 class="footer-title">Company</h6>
+                        <ul>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">Marketing</a></li>
+                            <li><a href="#">Awards</a></li>
+                        </ul>
+                        </div>
+                        <!-- footer link -->
+                    </div>
+                    <div class="f-link">
+                        <div class="footer-link">
+                        <h6 class="footer-title">Services</h6>
+                        <ul>
+                            <li><a href="#">Products</a></li>
+                            <li><a href="#">Business</a></li>
+                            <li><a href="#">Developer</a></li>
+                            <li><a href="#">Insights</a></li>
+                        </ul>
+                        </div>
+                        <!-- footer link -->
+                    </div>
+                    <div class="col-xl-2 col-lg-3 col-sm-4">
+                        <!-- Start Footer Contact -->
+                        <div class="footer-contact">
+                        <h6 class=" footer-title">Help & Support</h6>
+                        <ul>
+                            <li>
+                                <i class="lni lni-map-marker"></i> Madison Street, NewYork,
+                                USA
+                            </li>
+                            <li><i class="lni lni-phone-set"></i> +88 556 88545</li>
+                            <li><i class="lni lni-envelope"></i> support@ayroui.com</li>
+                        </ul>
+                        </div>
+                        <!-- End Footer Contact -->
+                    </div>
+                </div>
+                <!-- row -->
+            </div>
+            <!-- container -->
+            </div>
+            <!-- footer widget -->
+            <div class="footer-copyright bg-dark">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div
+                        class="
+                        copyright
+                        text-center
+                        d-md-flex
+                        justify-content-between
+                        align-items-center
+                        "
+                        >
+                        <p class="text text-white">Copyright © 2024 <i>Keegan.</i> All Rights Reserved</p>
+                        <ul class="social">
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <i class="lni lni-facebook-square"></i>    
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                <i class="lni lni-twitter-original"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                <i class="lni lni-instagram-filled"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)"
+                                    ><i class="lni lni-linkedin-original"></i
+                                    ></a>
+                            </li>
+                        </ul>
+                        </div>
+                        <!-- copyright -->
+                    </div>
+                </div>
+                <!-- row -->
+            </div>
+            <!-- container -->
+            </div>
+            <!-- footer copyright -->
+        </footer>
+        <!--====== FOOTER ONE PART ENDS ======-->
+    </section>
 </body>
 </html>
