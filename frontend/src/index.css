@@ -615,6 +615,11 @@ label {
    color: var(--success);
 }
 
+
+/*======Orders=========*/
+.bi-dot{
+  font-size: 40px;
+}
 /*===== FOOTER =====*/
 .f-download {
   width: 40%;

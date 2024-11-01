@@ -17,88 +17,60 @@
 <body>
     <section>
         <div class="container" style="padding-top: 50px;">
-            <div class="row">
-                <div class="col-8">
-                    <h2 class="title_heading-2">Your Cart &nbsp;&boxh;&boxh;&boxh;&boxh;&boxh;&boxh;</h2>
-                    <h5>Not ready to checkout? Continue Shopping</h5>
+                    <h2 class="title_heading-2">Your Orders &nbsp;&boxh;&boxh;&boxh;&boxh;&boxh;&boxh;</h2>
 
                     <table style="width: 100%; margin-top: 30px; margin-bottom: 30px;">
                         <tr>
-                            <th style="width: 15%;">Product</th>
-                            <th style="width: 35%;"></th>
-                            <th style="width: 20%;">Quantity</th>
-                            <th style="width: 20%;">Subtotal</th>
-                            <td style="width: 10%;"></td>
+                            <th style="width: 10%;">Product</th>
+                            <th style="width: 45%;"></th>
+                            <th style="width: 20%;">Status</th>
+                            <th style="width: 25%;"></th>
                         </tr>
                         <!--Cart Item-->
                         <tr>
-                            <td style="width: 20px;">
+                            <td>
                                 <img src="./assets/images/product1.jpg" alt="image1">
                             </td>
                             <td>
-                                <h5 class="cart-title">Le Male Le Pefume</h5>
-                                <h5 class="cart-price">$20.00</h5>
-                            </td>
-                            <td>
+                                <h4>Le Male Le Pefume</h4>
                                 <div class="row">
-                                    <input type="number" name="quantity" value="1" class="quantityfield" style="width: 50px; height: 30px; padding-right: 0px;">
+                                    <h4><span class="price">$20.00</span>&nbsp;&nbsp;Quantity: <span class="quantity">1</span></h4>
                                 </div>
                             </td>
-                            <td style="width: 20%;">
-                                <h5 class="cart-subtotal">$20.00</h5>
+                            <td>
+                                <div class="row" style="justify-content: start;">
+                                    <i class="bi bi-dot"></i>
+                                    <span>Order Placed</span>
+                                </div>
                             </td>
-                            <td style="text-align: center;">
-                                <a href="#" class="remove-cross">
-                                    <i class="bi bi-x-lg"></i>
-                                </a>
+                            <td style="text-align: end;">
+                                <button class="btn primary-btn">Track Order</button>
                             </td>
                         </tr>
                         <!--Cart Item End-->
-                        <!--Cart Item-->
-                        <tr>
-                            <td style="width: 20px;">
-                                <img src="./assets/images/product5.jpg" alt="image5">
+                         <!--Cart Item-->
+                         <tr>
+                            <td>
+                                <img src="./assets/images/product4.jpg" alt="image4">
                             </td>
                             <td>
-                                <h5 class="cart-title">Le Male Le Pefume</h5>
-                                <h5 class="cart-price">$20.00</h5>
-                            </td>
-                            <td>
+                                <h4>Ducci</h4>
                                 <div class="row">
-                                    <input type="number" name="quantity" value="1" class="quantityfield" style="width: 50px; height: 30px; padding-right: 0px;">
+                                    <h4><span class="price">$20.00</span>&nbsp;&nbsp;Quantity: <span class="quantity">1</span></h4>
                                 </div>
                             </td>
-                            <td style="width: 20%;">
-                                <h5 class="cart-subtotal">$20.00</h5>
+                            <td>
+                                <div class="row" style="justify-content: start;">
+                                    <i class="bi bi-dot"></i>
+                                    <span>Order Placed</span>
+                                </div>
                             </td>
-                            <td style="text-align: center;">
-                                <a href="#" class="remove-cross">
-                                    <i class="bi bi-x-lg"></i>
-                                </a>
+                            <td style="text-align: end;">
+                                <button class="btn primary-btn">Track Order</button>
                             </td>
                         </tr>
                         <!--Cart Item End-->
                     </table>
-                </div>
-                <div class="col-4" style="padding-left: 100px;">
-                    <h2 style="padding-bottom: 15px;">Order Summary</h2>
-                    <input type="text" placeholder="Enter coupon code here" style="width: 100%; padding: 5px; margin-bottom: 15px;">
-                    <div class="row" style="justify-content: space-between; padding-top: 5px;">
-                        <h5>Subtotal</h5>
-                        <h5>$140.00</h5>
-                    </div>
-                    <div class="row" style="justify-content: space-between; padding-top: 8px; padding-bottom: 8px;">
-                        <h5>Shipping</h5>
-                        <h5>$10.00</h5>
-                    </div>
-                    <hr>
-                    <div class="row" style="justify-content: space-between; padding-top: 8px;">
-                        <h5>Total</h5>
-                        <h5>$150.00</h5>
-                    </div>
-                    <button type="submit" class="primary-btn addtocart-btn" value="Continue to checkout" style="margin-top: 15px;">Continue to checkout</button>
-                </div>
-            </div>
         </div>
     </section>
 </body>
