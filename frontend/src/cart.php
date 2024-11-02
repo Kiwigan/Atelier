@@ -1,11 +1,67 @@
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "atelier";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Retrieve cart items from the database
+$sql = "SELECT c.cart_id, c.product_id, c.quantity, c.total_price, p.product_name, p.product_price, p.product_image 
+        FROM cart c
+        JOIN perfumes p ON c.product_id = p.product_id";
+$result = $conn->query($sql);
+
+// Calculate subtotal
+$subtotal = 0;
+$shipping = 10.00; // Flat rate shipping, or you could calculate based on cart content
+
+// Update cart quantity if form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
+    $cart_id = $_POST['cart_id'];
+    $new_quantity = $_POST['quantity'];
+
+    // Get the product price from the perfumes table
+    $product_id_query = "SELECT product_price FROM perfumes WHERE product_id = (SELECT product_id FROM cart WHERE cart_id = ?)";
+    $product_stmt = $conn->prepare($product_id_query);
+    $product_stmt->bind_param("i", $cart_id);
+    $product_stmt->execute();
+    $product_stmt->bind_result($product_price);
+    $product_stmt->fetch();
+    $product_stmt->close();
+
+    // Calculate the new total price
+    $new_total_price = $product_price * $new_quantity;
+
+    // Update the cart with the new quantity and total price
+    $update_sql = "UPDATE cart SET quantity = ?, total_price = ? WHERE cart_id = ?";
+    $stmt = $conn->prepare($update_sql);
+    $stmt->bind_param("idi", $new_quantity, $new_total_price, $cart_id);
+    $stmt->execute();
+    $stmt->close();
+
+    // Refresh the page to show updated cart
+    header("Location: cart.php");
+    exit();
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="product_page.css">
+    <link rel = "stylesheet" href = "index.css">
     <link rel="icon" href="assets/logos/logo-light.png" type="image/png">
     
     <!--====== BootStrap Icons (NOTE: THIS IS NOT BOOTSTRAP FRAMEWORK, JUST ITS ICONS)======-->
@@ -13,8 +69,14 @@
 
     <!--====== Lineicons CSS ======-->
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+    <title>Cart</title>
 
-    <title>My Home Page</title>
+    <Style>
+        .remove-btn {
+            color: red;
+            cursor: pointer;
+        }
+    </Style>
 </head>
 <body>
     <!--HEADER SECTION-->
@@ -45,115 +107,68 @@
     </section>
 
     <section>
-        <div class="container" style="padding-top: 100px;">
-            <div class="row" style="align-items: flex-start;">
-                <div class="col-2">
-                    <b>Filters:</b>
-                    <div class="filters" style="border-style: groove; padding-left: 15px; padding-right: 15px;">
-                        <form method="POST" action="">
-                            <ul>
-                                <li>
-                                    <input type="radio" id="Men" name="gender" value="Men" 
-                                        <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Men') echo 'checked'; ?>
-                                        onclick="this.form.submit()">
-                                    <label for="Men">Men</label>
-                                </li>
-                                <li>
-                                    <input type="radio" id="Women" name="gender" value="Women" 
-                                        <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Women') echo 'checked'; ?>
-                                        onclick="this.form.submit()">
-                                    <label for="Women">Women</label>
-                                </li>
-                                <li>
-                                    <input type="radio" id="Unisex" name="gender" value="Unisex" 
-                                        <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Unisex') echo 'checked'; ?>
-                                        onclick="this.form.submit()">
-                                    <label for="Unisex">Unisex</label>
-                                </li>
-                            </ul>
-                        </form>
-                    </div>
+        <div class="container" style="padding-top: 50px;">
+            <div class="row">
+                <div class="col-7">
+                    <h2>Your Cart</h2>
+                    <h5>Not ready to checkout? <a href="home.html">Continue Shopping</a></h5>
+
+                    <table style="width: 100%; margin-top: 30px; margin-bottom: 30px;">
+                        <tr>
+                            <th style="width: 15%;">Product</th>
+                            <th style="width: 35%;"></th>
+                            <th style="width: 20%;">Quantity</th>
+                            <th style="width: 20%;">Subtotal</th>
+                            <th style="width: 10%;">Remove</th>
+                        </tr>
+                        
+                        <?php while ($row = $result->fetch_assoc()) : ?>
+                            <?php $subtotal += $row['total_price']; ?>
+                            <tr>
+                                <td style="width: 20px;">
+                                    <img src="<?php echo $row['product_image']; ?>" alt="<?php echo $row['product_name']; ?>" class="product-image">
+                                </td>
+                                <td>
+                                    <h5 class="cart-title"><?php echo $row['product_name']; ?></h5>
+                                    <h5 class="cart-price">$<?php echo number_format($row['product_price'], 2); ?></h5>
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <form method="POST" action="cart.php">
+                                            <input type="hidden" name="cart_id" value="<?php echo $row['cart_id']; ?>">
+                                            <input type="number" name="quantity" class="quantityfield" style="width: 50px; height: 30px; padding-right: 0px;" 
+                                                   value="<?php echo $row['quantity']; ?>" min="1" step="1"
+                                                   onchange="this.value = Math.max(1, this.value); this.form.submit()">
+                                        </form>
+                                    </div>
+                                </td>
+                                <td style="width: 20%;">
+                                    <h5 class="cart-subtotal">$<?php echo number_format($row['total_price'], 2); ?></h5>
+                                </td>
+                                <td>
+                                    <span class="remove-btn" onclick="removeFromCart(<?php echo $row['cart_id']; ?>)">×</span>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </table>
                 </div>
-                
-                <div class="product-container">
-                    <h1>Perfume Collection</h1>
-                    <div class="products-grid">
-
-                        <?php
-                        $servername = "localhost";
-                        $username = "root";
-                        $password = "";
-                        $dbname = "atelier";
-                        
-                        $conn = new mysqli($servername, $username, $password, $dbname);
-                        
-                        if ($conn->connect_error) {
-                            die("Connection failed: " . $conn->connect_error);
-                        }
-
-                        // Check if a gender filter has been set
-                        $gender_filter = isset($_POST['gender']) ? $_POST['gender'] : '';
-                        $sql = "SELECT product_id, product_name, product_price, product_image, product_details, product_rating, gender FROM perfumes";
-
-                        // Add the gender filter to the SQL query
-                        if ($gender_filter) {
-                            $sql .= " WHERE gender = '$gender_filter'";
-                        }
-
-                        $result = $conn->query($sql);
-
-                        if ($result->num_rows > 0) {
-                            while($row = $result->fetch_assoc()) {
-                                // Wrap each product card in an <a> tag
-                                
-                                echo "<a href='product_details.php?product_id=" . $row['product_id'] . "' style='text-decoration: none; color: inherit;'>";
-
-                                echo "<div class='product-card'>";
-                                echo "<img src='" . $row['product_image'] . "' alt='" . $row['product_name'] . "' class='product-image'>";
-                                echo "<h2 class='product-name'>" . $row['product_name'] . "</h2>";
-                                echo "<p class='product-price'>$" . number_format($row['product_price'], 2) . "</p>";
-                                echo "<p class='product-details'>" . $row['product_details'] . "</p>";
-                                echo "<p class='product-rating'>Rating: " . number_format($row['product_rating'], 1) . " / 5</p>";
-                                
-                                // Add to Cart Form
-                                echo "<form method='POST' action=''>";
-                                echo "<input type='hidden' name='product_id' value='" . $row['product_id'] . "'>";
-                                echo "<input type='hidden' name='quantity' value='1'>"; // Default quantity of 1
-                                echo "<input type='hidden' name='product_price' value='" . $row['product_price'] . "'>";
-                                echo "<button type='submit' name='add_to_cart' class='add-to-cart-btn'>Add to Cart</button>";
-                                echo "</form>";
-                                echo "</div>";
-                            }
-                        } else {
-                            echo "<p>No products found.</p>";
-                        }
-
-                        // Handle Add to Cart submission
-                        if (isset($_POST['add_to_cart'])) {
-                            $product_id = $_POST['product_id'];
-                            $quantity = $_POST['quantity'];
-                            $product_price = $_POST['product_price'];
-                            $total_price = $quantity * $product_price;
-
-                            $sql = "INSERT INTO cart (product_id, quantity, total_price, added_at) VALUES (?, ?, ?, NOW())";
-                            $stmt = $conn->prepare($sql);
-                            $stmt->bind_param("iid", $product_id, $quantity, $total_price);
-
-                            if ($stmt->execute()) {
-                                echo "<script>
-                                        alert('Item successfully added to cart!');
-                                        window.location.href = 'product_page.php?product_id=" . $product_id . "';
-                                    </script>";
-                            } else {
-                                echo "<script>alert('Error adding item to cart: " . $conn->error . "');</script>";
-                            }
-
-                            $stmt->close();
-                        }
-
-                        $conn->close();
-                        ?>
+                <div class="col-5" style="padding-left: 100px;">
+                    <h2 style="padding-bottom: 10px;">Order Summary</h2>
+                    <input type="text" placeholder="Enter coupon code here" style="width: 100%; padding: 5px; margin-bottom: 10px;">
+                    <div class="row" style="justify-content: space-between; padding-top: 5px;">
+                        <h5>Subtotal</h5>
+                        <h5>$<?php echo number_format($subtotal, 2); ?></h5>
                     </div>
+                    <div class="row" style="justify-content: space-between; padding-top: 5px; padding-bottom: 5px;">
+                        <h5>Shipping</h5>
+                        <h5>$<?php echo number_format($shipping, 2); ?></h5>
+                    </div>
+                    <hr>
+                    <div class="row" style="justify-content: space-between; padding-top: 5px;">
+                        <h5>Total</h5>
+                        <h5>$<?php echo number_format($subtotal + $shipping, 2); ?></h5>
+                    </div>
+                    <button class="primary-btn addtocart-btn" style="margin-top: 10px;" onclick="window.location.href='checkout.php'">Continue to checkout</button>
                 </div>
             </div>
         </div>
@@ -282,5 +297,17 @@
         </footer>
         <!--====== FOOTER ONE PART ENDS ======-->
     </section>
+
+    <!-- JS to remove item from cart -->
+    <script>
+        function removeFromCart(cartId) {
+            if (confirm("Are you sure you want to remove this item from your cart?")) {
+                window.location.href = "remove_from_cart.php?cart_id=" + cartId;
+            }
+        }
+    </script>
 </body>
 </html>
+
+
+<?php $conn->close(); ?>
