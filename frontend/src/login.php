@@ -16,11 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validate username and password input
     if (empty($username)) {
-        $username_error = "*Please enter your email.";
+        $username_error = "*Please enter your email.<br>";
     }
 
     if (empty($password)) {
-        $password_error = "*Please enter your password.";
+        $password_error = "*Please enter your password.<br>";
     }
 
     // Check if there are no errors before processing
@@ -29,25 +29,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $dbConnection = getDatabaseConnection();
 
         // Prepare the SQL statement to prevent SQL injection
-        $statement = $dbConnection->prepare("SELECT password FROM user WHERE username = ?");
+        $statement = $dbConnection->prepare("SELECT user_id, password FROM user WHERE username = ?");
         $statement->bind_param("s", $username);
         $statement->execute();
         $statement->store_result();
 
         if ($statement->num_rows > 0) {
             // User exists, now check the password
-            $statement->bind_result($hashed_password);
+            $statement->bind_result($user_id, $hashed_password);
             $statement->fetch();
 
             // Verify the password (if hashed, use password_verify)
             if ($password === $hashed_password) { // Change this if you're hashing passwords
                 $login_success = true;
-                // Start a session or perform login actions here
+                // Store user information in session
+                $_SESSION['user_id'] = $user_id; // Store user ID in session
+
+                // Check for the cookie corresponding to this user
+                if (isset($_COOKIE["user_cart_" . $user_id])) {
+                    // Load the cart from the cookie
+                    $_SESSION['cart'] = json_decode($_COOKIE["user_cart_" . $user_id], true);
+                    // Optionally unset the cookie after loading it
+                    setcookie("user_cart_" . $user_id, "", time() - 3600, "/"); // Delete the cookie
+                } else {
+                    $_SESSION['cart'] = isset($_SESSION['cart']) ? $_SESSION['cart'] : []; // Initialize cart if not already set
+                }
+
             } else {
-                $password_error = "*Incorrect password.";
+                $password_error = "*Incorrect password.<br>";
             }
         } else {
-            $username_error = "*Username not found.";
+            $username_error = "*Username not found.<br>";
         }
 
         $statement->close();
@@ -79,29 +91,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <section class="login">
          <div class="form-box">
             <div class="form-value">
-                <form method="post" action="login">
+                <form method="post">
                     <h2 class="login-header">Login</h2>
                     <div class="inputbox">
                         <ion-icon name="mail-outline"></ion-icon>
-                        <input type="text" id="username" name="username">
+                        <input type="text" id="username" name="username" placeholder=" ">
                         <label for="">Email</label>
                     </div>
                     <div class="inputbox">
                         <ion-icon name="lock-closed-outline"></ion-icon>
-                        <input type="password" id="password" name="password">
+                        <input type="password" id="password" name="password" placeholder=" ">
                         <label for="">Password</label>
                     </div>
                     <div class="forget">
                         <label for=""><input type="checkbox">Remember Me</label>
                         <a href="#">Forget Password</a>
                     </div>
+
+                    <span class="text-danger"><?= $username_error ?></span>
+                    <span class="text-danger"><?= $password_error ?></span>
+
                     <div class="row" style="justify-content: center; padding-top: 15px;">
-                        <input type="submit" value="Login" class="primary-btn login-btn">
+                        <button type="submit" class="primary-btn login-btn">Login</button>
                     </div>
                     <div class="register">
-                        <p>Don't have a account <a href="register.html">Register</a></p>
+                        <p>Don't have a account <a href="register.php">Register</a></p>
                     </div>
                 </form>
+
 
                 <?php if ($login_success): ?>
                     <div class="notification" id="notification">
@@ -109,47 +126,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <script>
                         setTimeout(() => {
-                            window.location.href = 'dashboard.php'; // Redirect to the desired page after successful login
+                            window.location.href = 'home.html'; // Redirect to the desired page after successful login
                         }, 3000);
                     </script>
                 <?php endif; ?>
 
-                
+
             </div>
         </div>
     </section>
 </body>
 </html>
-        <!--div class="container">
-            <div class="row" style="justify-content: center;">
-                <div class="col-4" style=" display: flex; justify-content: center;">
-                    <div class="form-box" style="justify-content: center; padding: 20px;">
-                    <form method="post" action="login">
-                        <h2 class="login-header">Login</h2>
-                        <div class="inputbox">
-                            <ion-icon name="mail-outline"></ion-icon>
-                            <input type="email" id="username" name="username" required >
-                            <label for="">Email</label>
-                        </div>
-                        <div class="inputbox">
-                            <ion-icon name="lock-closed-outline"></ion-icon>
-                            <input type="password" id="password" name="password" required>
-                            <label for="">Password</label>
-                        </div>
-                        <div class="forget">
-                            <label for=""><input type="checkbox">Remember Me</label>
-                            <a href="#">Forget Password</a>
-                        </div>
-                        <div class="row" style="justify-content: center; padding-top: 15px;">
-                            <input type="submit" value="Login" class="primary-btn login-btn">
-                        </div>
-                        <div class="register">
-                            <p>Don't have a account <a href="register.html">Register</a></p>
-                        </div>
-                    </form>
-                    </form>
-                </div>
-                </div>
-            </div>
-        </div-->
-

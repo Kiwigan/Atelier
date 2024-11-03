@@ -95,8 +95,22 @@ function displayrating($rating){
                     <div class="row" style="justify-content: start;">
 
                         <?php
+                        session_start(); // Start the session
 
-                        include('./connect.php');
+                        // Database connection settings
+                        $servername = "localhost";
+                        $username = "root";
+                        $password = "";
+                        $dbname = "atelier";
+                        
+                        // Create connection
+                        $conn = new mysqli($servername, $username, $password, $dbname, '3306');
+                        
+                        // Check connection
+                        if ($conn->connect_error) {
+                            die("Connection failed: " . $conn->connect_error);
+                        }
+
 
                         // Check if a gender filter has been set
                         $gender_filter = isset($_POST['gender']) ? $_POST['gender'] : '';
