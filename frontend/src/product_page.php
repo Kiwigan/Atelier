@@ -2,10 +2,16 @@
 function displayrating($rating){
     echo "<div class='ratings'>";
     for($i = $rating; $i >= 1; $i--){
-        echo "<i class='bi bi-star-fill'></i>";
+        echo "<i class='bi bi-star-fill'></i>&nbsp";
     }
     if(($rating*10)%10 != 0){
-        echo "<i class='bi bi-halfstar-fill'></i>";
+        echo "<i class='bi bi-star-half'></i>&nbsp";
+    }
+    $remainder = 5 - floor($rating);
+    if($remainder > 0){
+        for($i = $remainder; $i>0; $i--){
+            echo "<i class='bi bi-star'></i>&nbsp";
+        }
     }
     echo "</div>";
 
@@ -30,6 +36,29 @@ function displayrating($rating){
 
     <title>My Home Page</title>
 
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+          const header = document.querySelector("header");
+          let lastScrollTop = 0;
+    
+          window.addEventListener("scroll", function() {
+            let scrollTop = window.scrollY;
+    
+            if (scrollTop > 0) {
+              header.classList.add("sticky");
+              if (scrollTop >= lastScrollTop) {
+                header.classList.add("hidden"); // Scroll down - hide
+              } else {
+                header.classList.remove("hidden"); // Scroll up - show
+              }
+            } else {
+              header.classList.remove("sticky", "hidden"); // Reset at top
+            }
+            
+            lastScrollTop = scrollTop;
+          });
+        });
+      </script>
     
 </head>
 <body>
@@ -45,8 +74,8 @@ function displayrating($rating){
                     </div>
                     <div class="nav-items">
                         <a href="home.html">Home</a>
-                        <a href="#">About</a>
-                        <a href="product_page.php">Products</a>
+                        <a href="product_page.php" class="active">Products</a>
+                        <a href="orders.html">Orders</a>
                         <a href="#">Contact Us</a>
                     </div>
                     <div class="icon-items">
@@ -96,7 +125,17 @@ function displayrating($rating){
 
                         <?php
 
-                        include('./connect.php');
+                            session_start(); // Start the session
+                            $servername = "localhost";
+                            $username = "root";
+                            $password = "";
+                            $dbname = "atelier";
+
+                            $conn = new mysqli($servername, $username, $password, $dbname, '3325');
+
+                            if ($conn->connect_error) {
+                                die("Connection failed: " . $conn->connect_error);
+                            }
 
                         // Check if a gender filter has been set
                         $gender_filter = isset($_POST['gender']) ? $_POST['gender'] : '';
@@ -124,7 +163,7 @@ function displayrating($rating){
                                 echo "<p class='card-price'>$" . number_format($row['product_price'], 2) . "</p>";
                                 /*echo "<button type='submit' name='add_to_cart' class='add-to-cart-btn'>Add to Cart</button>";*/
                                 echo "</div>";
-                               echo "</form>";
+                                echo "</form>";
                                 echo "</div>";
                                 echo "</div>";
                             }
