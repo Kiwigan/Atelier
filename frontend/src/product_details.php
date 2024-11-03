@@ -1,4 +1,24 @@
 <?php
+function displayrating($rating){
+    echo "<div class='ratings'>";
+    for($i = $rating; $i >= 1; $i--){
+        echo "<i class='bi bi-star-fill'></i>&nbsp";
+    }
+    if(($rating*10)%10 != 0){
+        echo "<i class='bi bi-star-half'></i>&nbsp";
+    }
+    $remainder = 5 - floor($rating);
+    if($remainder > 0){
+        for($i = $remainder; $i>0; $i--){
+            echo "<i class='bi bi-star'></i>&nbsp";
+        }
+    }
+    echo "</div>";
+
+}
+?>
+
+<?php
 session_start(); // Start the session
 $servername = "localhost";
 $username = "root";
@@ -6,7 +26,7 @@ $password = "";
 $dbname = "atelier";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname, '3325');
 
 // Check connection
 if ($conn->connect_error) {
@@ -68,6 +88,7 @@ if (isset($_POST['add_to_cart'])) {
 $conn->close();
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,7 +96,38 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $product['product_name']; ?> - Details</title>
     <link rel="stylesheet" href="index.css">
+    <link rel="icon" href="assets/logos/logo-light.png" type="image/png">
+
+    <!--====== BootStrap Icons (NOTE: THIS IS NOT BOOTSTRAP FRAMEWORK, JUST ITS ICONS)======-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!--====== Lineicons CSS ======-->
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
 </head>
+
+<script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+          const header = document.querySelector("header");
+          let lastScrollTop = 0;
+    
+          window.addEventListener("scroll", function() {
+            let scrollTop = window.scrollY;
+    
+            if (scrollTop > 0) {
+              header.classList.add("sticky");
+              if (scrollTop >= lastScrollTop) {
+                header.classList.add("hidden"); // Scroll down - hide
+              } else {
+                header.classList.remove("hidden"); // Scroll up - show
+              }
+            } else {
+              header.classList.remove("sticky", "hidden"); // Reset at top
+            }
+            
+            lastScrollTop = scrollTop;
+          });
+        });
+      </script>
 
 <body>
     <!--HEADER SECTION-->
@@ -113,11 +165,12 @@ $conn->close();
                 </div>
                 <div class="col-5">
                     <h1><?php echo $product['product_name']; ?></h1> 
-                    <h4>$<?php echo number_format($product['product_price'], 2); ?></h4>
-                    <br><br>
+                    <h4 style="padding-bottom:5px;">$<?php echo number_format($product['product_price'], 2); ?></h4>
+                    <?php displayrating($product['product_rating']); ?>
+                    <br>
                     <hr>
                     <p style="padding-top: 30px; padding-bottom: 30px;"><?php echo $product['product_details']; ?></p>
-                    <p>Rating: <?php echo $product['product_rating']; ?> / 5</p>
+                    
 
                     <b>
                         <span id="sold-no">17</span>
@@ -132,7 +185,7 @@ $conn->close();
 
                         <div class="row" style="padding-top: 30px;">
                             <div class="col-2" style="display: flex; flex-wrap: wrap;">
-                                <input type="number" name="quantity" value="1" min="1" class="quantityfield">
+                                <input type="number" name="quantity" value="1" min="1" class="quantityfield" style="width: 100%; height: 45px; min-width:60px;">
                             </div>
                             <div class="col-10" style="display: flex; flex-wrap: wrap;">
                                 <button type="submit" name="add_to_cart" class="primary-btn addtocart-btn" value="Add to Cart">
@@ -271,3 +324,4 @@ $conn->close();
     </section>
 </body>
 </html>
+
