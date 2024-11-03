@@ -1,3 +1,17 @@
+<?php
+session_start(); // Start the session
+
+// Initiate Subtotal
+$subtotal = 0;
+$shipping = 10.00; // Flat rate shipping, or you could calculate based on cart content
+
+if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])):
+    foreach ($_SESSION['cart'] as $cart_id => $item):
+        $subtotal += $item['total_price'];
+    endforeach;
+endif; 
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -22,7 +36,7 @@
                     <h2 class="title_heading-2">Checkout &nbsp;&boxh;&boxh;&boxh;&boxh;&boxh;&boxh;</h2>
                     <h3 style="padding-bottom: 10px;">Delivery Information</h3>
 
-                    <form action="payment.php" method="POST">
+                    <form action="checkout.php" method="POST">
                         <div class="row delivery-input">
                             <div class="col-6 input-wrapper">
                                 <div class="input-items default">
@@ -91,18 +105,18 @@
                     <input type="text" placeholder="Enter coupon code here" style="width: 100%; padding: 5px; margin-bottom: 15px;">
                     <div class="row" style="justify-content: space-between; padding-top: 5px;">
                         <h5>Subtotal</h5>
-                        <h5>$140.00</h5>
+                        <h5><?php echo number_format($subtotal, 2); ?></h5>
                     </div>
                     <div class="row" style="justify-content: space-between; padding-top: 8px; padding-bottom: 8px;">
                         <h5>Shipping</h5>
-                        <h5>$10.00</h5>
+                        <h5>$<?php echo number_format($shipping, 2); ?></h5>
                     </div>
                     <hr>
                     <div class="row" style="justify-content: space-between; padding-top: 8px;">
                         <h5>Total</h5>
-                        <h5>$150.00</h5>
+                        <h5>$<?php echo number_format($subtotal + $shipping, 2); ?></h5>
                     </div>
-                    <button type="submit" class="primary-btn addtocart-btn" value="Edit Order" style="margin-top: 15px;">Edit Order</button>
+                    <button type="submit" class="primary-btn addtocart-btn" value="Edit Order" style="margin-top: 15px;" onclick="window.location.href='cart.php'">Edit Order</button>
                 </div>
             </div>
         </div>
