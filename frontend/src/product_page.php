@@ -80,6 +80,7 @@
                     <div class="products-grid">
 
                         <?php
+                        session_start(); // Start the session
                         $servername = "localhost";
                         $username = "root";
                         $password = "";
@@ -113,13 +114,15 @@
                                 echo "<h2 class='product-name'>" . $row['product_name'] . "</h2>";
                                 echo "<p class='product-price'>$" . number_format($row['product_price'], 2) . "</p>";
                                 echo "<p class='product-details'>" . $row['product_details'] . "</p>";
-                                echo "<p class='product-rating'>Rating: " . number_format($row['product_rating'], 1) . " / 5</p>";
+                                echo "<p class='product-rating'>Rating: " . number_format($row['product_rating'], 1) . " / 5.0</p>";
                                 
                                 // Add to Cart Form
                                 echo "<form method='POST' action=''>";
                                 echo "<input type='hidden' name='product_id' value='" . $row['product_id'] . "'>";
                                 echo "<input type='hidden' name='quantity' value='1'>"; // Default quantity of 1
                                 echo "<input type='hidden' name='product_price' value='" . $row['product_price'] . "'>";
+                                echo "<input type='hidden' name='product_name' value='" . $row['product_name'] . "'>";
+                                echo "<input type='hidden' name='product_image' value='" . $row['product_image'] . "'>";
                                 echo "<button type='submit' name='add_to_cart' class='add-to-cart-btn'>Add to Cart</button>";
                                 echo "</form>";
                                 echo "</div>";
@@ -135,20 +138,32 @@
                             $product_price = $_POST['product_price'];
                             $total_price = $quantity * $product_price;
 
-                            $sql = "INSERT INTO cart (product_id, quantity, total_price, added_at) VALUES (?, ?, ?, NOW())";
-                            $stmt = $conn->prepare($sql);
-                            $stmt->bind_param("iid", $product_id, $quantity, $total_price);
-
-                            if ($stmt->execute()) {
-                                echo "<script>
-                                        alert('Item successfully added to cart!');
-                                        window.location.href = 'product_page.php?product_id=" . $product_id . "';
-                                    </script>";
-                            } else {
-                                echo "<script>alert('Error adding item to cart: " . $conn->error . "');</script>";
+                            // Initialize the cart in the session if it doesn't exist
+                            if (!isset($_SESSION['cart'])) {
+                                $_SESSION['cart'] = array();
                             }
 
-                            $stmt->close();
+                            // Check if the product already exists in the cart
+                            if (isset($_SESSION['cart'][$product_id])) {
+                                // Update the existing item
+                                $_SESSION['cart'][$product_id]['quantity'] += $quantity;
+                                $_SESSION['cart'][$product_id]['total_price'] += $total_price;
+                            } else {
+                                // Add a new item to the cart
+                                $_SESSION['cart'][$product_id] = array(
+                                    'product_id' => $product_id,
+                                    'quantity' => $quantity,
+                                    'total_price' => $total_price,
+                                    'product_price' => $product_price, // Store the individual price for future reference
+                                    'product_name' => $_POST['product_name'], // Assuming you have this input
+                                    'product_image' => $_POST['product_image'], // Assuming you have this input
+                                );
+                            }
+
+                            echo "<script>
+                                    alert('Item successfully added to cart!');
+                                    window.location.href = 'product_page.php?product_id=" . $product_id . "';
+                                </script>";
                         }
 
                         $conn->close();
