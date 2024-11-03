@@ -1,4 +1,5 @@
 <?php
+session_start(); // Start the session
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -39,25 +40,29 @@ if (isset($_POST['add_to_cart'])) {
     $product_price = $_POST['product_price'];
     $total_price = $quantity * $product_price;
 
-    // Insert the data into the cart table
-    $sql = "INSERT INTO cart (product_id, quantity, total_price, added_at) VALUES (?, ?, ?, NOW())";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iid", $form_product_id, $quantity, $total_price);
-
-    if ($stmt->execute()) {
-        // Success message with JavaScript alert, Returns to same page after a 0.2second delay
-        echo "<script>
-            alert('Item successfully added to cart!');
-            window.location.href = 'product_page.php?product_id=" . $form_product_id . "';
-          </script>";
-
-        exit(); // End script to prevent further execution
-    } else {
-        // Error message with JavaScript alert
-        echo "<script>alert('Error adding item to cart: " . $conn->error . "');</script>";
+    // Initialize cart in session if it doesn't exist
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
     }
 
-    $stmt->close();
+    // Add item to cart session
+    $_SESSION['cart'][] = [
+        'product_id' => $form_product_id,
+        'quantity' => $quantity,
+        'total_price' => $total_price,
+        'product_price' => $product['product_price'],
+        'product_name' => $product['product_name'], // Add product name if needed
+        'product_image' => $product['product_image'],
+        // You can add more product details as needed
+    ];
+
+    // Success message with JavaScript alert, Returns to same page after a 0.2 second delay
+    echo "<script>
+        alert('Item successfully added to cart!');
+        window.location.href = 'product_page.php?product_id=" . $form_product_id . "';
+      </script>";
+
+    exit(); // End script to prevent further execution
 }
 
 $conn->close();

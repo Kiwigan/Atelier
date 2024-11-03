@@ -1,4 +1,12 @@
 <?php
+session_start(); // Start the session
+
+// FOR DEBUGGING PURPOSES Debug: Print session ---------------------------------------------------------------------------------
+echo "<pre>";
+print_r($_SESSION['cart']); // Print current cart session data
+echo "</pre>";
+// FOR DEBUGGING PURPOSES Debug: Print session ---------------------------------------------------------------------------------
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -12,43 +20,65 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Retrieve cart items from the database
-$sql = "SELECT c.cart_id, c.product_id, c.quantity, c.total_price, p.product_name, p.product_price, p.product_image 
-        FROM cart c
-        JOIN perfumes p ON c.product_id = p.product_id";
-$result = $conn->query($sql);
-
-// Calculate subtotal
+// Inititate Subtotal
 $subtotal = 0;
 $shipping = 10.00; // Flat rate shipping, or you could calculate based on cart content
+
+
+// Check if remove_product_id is set in the request
+if (isset($_POST['remove_product_id'])) {
+    $remove_product_id = intval($_POST['remove_product_id']);
+    $found = false; // To check if the item was found
+
+    // Loop through the cart to find and remove the product
+    if (isset($_SESSION['cart'])) {
+        foreach ($_SESSION['cart'] as $key => $product) {
+            if ($product['product_id'] == $remove_product_id) {
+                unset($_SESSION['cart'][$key]); // Remove the product
+                echo "Item with product ID $remove_product_id removed.";
+                $found = true;
+                break; // Exit loop after removing the item
+            }
+        }
+    }
+
+    if (!$found) {
+        echo "Item with product ID $remove_product_id not found in session.";
+    }
+
+    // Redirect to avoid form resubmission issues
+    header("Location: cart.php");
+    exit();
+}
 
 // Update cart quantity if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
     $cart_id = $_POST['cart_id'];
     $new_quantity = $_POST['quantity'];
 
-    // Get the product price from the perfumes table
-    $product_id_query = "SELECT product_price FROM perfumes WHERE product_id = (SELECT product_id FROM cart WHERE cart_id = ?)";
-    $product_stmt = $conn->prepare($product_id_query);
-    $product_stmt->bind_param("i", $cart_id);
-    $product_stmt->execute();
-    $product_stmt->bind_result($product_price);
-    $product_stmt->fetch();
-    $product_stmt->close();
-
-    // Calculate the new total price
-    $new_total_price = $product_price * $new_quantity;
-
-    // Update the cart with the new quantity and total price
-    $update_sql = "UPDATE cart SET quantity = ?, total_price = ? WHERE cart_id = ?";
-    $stmt = $conn->prepare($update_sql);
-    $stmt->bind_param("idi", $new_quantity, $new_total_price, $cart_id);
-    $stmt->execute();
-    $stmt->close();
+    // Update the quantity in the session cart
+    if (isset($_SESSION['cart'][$cart_id])) {
+        $_SESSION['cart'][$cart_id]['quantity'] = $new_quantity;
+        $_SESSION['cart'][$cart_id]['total_price'] = $_SESSION['cart'][$cart_id]['product_price'] * $new_quantity;
+    }
 
     // Refresh the page to show updated cart
     header("Location: cart.php");
     exit();
+}
+
+//TROUBLE SHOOTING PURPOSES ---------------------------------------------------------------------------------------------
+// Example: Clear all items in the cart
+if (isset($_POST['clear_cart'])) {
+    unset($_SESSION['cart']);
+    echo "All items in the cart have been removed.";
+}
+
+// Example: Clear all session data
+if (isset($_POST['clear_session'])) {
+    session_destroy();
+    $_SESSION = []; // Clear the session array
+    echo "All session data has been cleared.";
 }
 ?>
 
@@ -113,6 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
                     <h2>Your Cart</h2>
                     <h5>Not ready to checkout? <a href="home.html">Continue Shopping</a></h5>
 
+
                     <table style="width: 100%; margin-top: 30px; margin-bottom: 30px;">
                         <tr>
                             <th style="width: 15%;">Product</th>
@@ -121,35 +152,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
                             <th style="width: 20%;">Subtotal</th>
                             <th style="width: 10%;">Remove</th>
                         </tr>
+
+                        <?php
+                        // Check if the session cart is set and not empty
+                        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])):
+                            foreach ($_SESSION['cart'] as $cart_id => $item):
+                                $subtotal += $item['total_price'];?>
                         
-                        <?php while ($row = $result->fetch_assoc()) : ?>
-                            <?php $subtotal += $row['total_price']; ?>
+                        
                             <tr>
                                 <td style="width: 20px;">
-                                    <img src="<?php echo $row['product_image']; ?>" alt="<?php echo $row['product_name']; ?>" class="product-image">
+                                    <img src="<?php echo $item['product_image']; ?>" alt="<?php echo $item['product_name']; ?>" class="product-image">
                                 </td>
                                 <td>
-                                    <h5 class="cart-title"><?php echo $row['product_name']; ?></h5>
-                                    <h5 class="cart-price">$<?php echo number_format($row['product_price'], 2); ?></h5>
+                                    <h5 class="cart-title"><?php echo $item['product_name']; ?></h5>
+                                    <h5 class="cart-price">$<?php echo number_format($item['product_price'], 2); ?></h5>
                                 </td>
                                 <td>
                                     <div class="row">
                                         <form method="POST" action="cart.php">
-                                            <input type="hidden" name="cart_id" value="<?php echo $row['cart_id']; ?>">
+                                            <input type="hidden" name="cart_id" value="<?php echo $cart_id; ?>">
                                             <input type="number" name="quantity" class="quantityfield" style="width: 50px; height: 30px; padding-right: 0px;" 
-                                                   value="<?php echo $row['quantity']; ?>" min="1" step="1"
+                                                   value="<?php echo $item['quantity']; ?>" min="1" step="1"
                                                    onchange="this.value = Math.max(1, this.value); this.form.submit()">
                                         </form>
                                     </div>
                                 </td>
                                 <td style="width: 20%;">
-                                    <h5 class="cart-subtotal">$<?php echo number_format($row['total_price'], 2); ?></h5>
+                                    <h5 class="cart-subtotal">$<?php echo number_format($item['total_price'], 2); ?></h5>
                                 </td>
                                 <td>
-                                    <span class="remove-btn" onclick="removeFromCart(<?php echo $row['cart_id']; ?>)">×</span>
+                                    <form method="POST" action="cart.php">
+                                    <input type="hidden" name="remove_product_id" value="<?php echo $item['product_id']; ?>">
+                                    <button type="submit" class="remove-btn">×</button>
+                                    </form>
                                 </td>
                             </tr>
-                        <?php endwhile; ?>
+
+                            <?php endforeach;
+                        else: ?>
+                            <tr>
+                                <td colspan="5" style="text-align: center;">Your cart is empty.</td>
+                            </tr>
+                        <?php endif; ?>
                     </table>
                 </div>
                 <div class="col-5" style="padding-left: 100px;">
@@ -168,11 +213,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
                         <h5>Total</h5>
                         <h5>$<?php echo number_format($subtotal + $shipping, 2); ?></h5>
                     </div>
-                    <button class="primary-btn addtocart-btn" style="margin-top: 10px;" onclick="window.location.href='checkout.php'">Continue to checkout</button>
+                    <?php if (!empty($_SESSION['cart'])): ?>
+                        <form method="POST" action="payment.php">
+                            <button class="primary-btn addtocart-btn" style="margin-top: 10px;">Continue to checkout</button>
+                        </form>
+                    <?php else: ?>
+                        <button class="primary-btn addtocart-btn" style="margin-top: 10px;" disabled>Continue to Checkout</button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- FOR DEBUGGING PURPOSES: DELETE CART / RESTART SESSION-------------------------------------------------------------------------------->
+    <form method="POST" action="">
+    <button type="submit" name="clear_cart">Clear Cart</button>
+    <button type="submit" name="clear_session">Clear All Session Data</button>
+    </form>
+    <!------------------------------------------------------------------------------------------------------------------------------->
 
     <!--FOOTER SECTION-->
     <section>
