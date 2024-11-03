@@ -40,3 +40,9 @@ CREATE TABLE order_items (
     total_price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
 );
+
+CREATE TABLE user (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(30),
+    password VARCHAR(30)
+);

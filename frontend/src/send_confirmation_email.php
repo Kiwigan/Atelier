@@ -1,6 +1,6 @@
 <?php
 // Start the session (if necessary)
-session_start();
+session_start(); 
 
 // Database connection settings
 $servername = "localhost";
@@ -9,12 +9,14 @@ $password = "";
 $dbname = "atelier";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname, '3325');
+
+$conn = new mysqli($servername, $username, $password, $dbname, '3306');
 
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
 
 // Ensure we have an order ID to work with
 if (!isset($_GET['order_id'])) {

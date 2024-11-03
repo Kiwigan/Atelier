@@ -1,6 +1,5 @@
 <?php
-
-
+include('./connect.php');
 $username = "";
 $password = "";
 $confirm_password = "";
@@ -24,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $username_error = "*Please enter a valid email address.<br>";
     }
 
-    include('./connect.php');
+    
     $dbConnection = getDatabaseConnection();
 
     $statement = $dbConnection -> prepare("SELECT user_id FROM user WHERE username = ?");

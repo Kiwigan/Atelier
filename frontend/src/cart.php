@@ -1,19 +1,15 @@
 <?php
 session_start(); // Start the session
 
-// FOR DEBUGGING PURPOSES Debug: Print session ---------------------------------------------------------------------------------
-echo "<pre>";
-print_r($_SESSION['cart']); // Print current cart session data
-echo "</pre>";
-// FOR DEBUGGING PURPOSES Debug: Print session ---------------------------------------------------------------------------------
-
+// Database connection settings
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "atelier";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname, '3325');
+$conn = new mysqli($servername, $username, $password, $dbname, '3306');
+
 
 // Check connection
 if ($conn->connect_error) {
@@ -66,22 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
     header("Location: cart.php");
     exit();
 }
-
-//TROUBLE SHOOTING PURPOSES ---------------------------------------------------------------------------------------------
-// Example: Clear all items in the cart
-if (isset($_POST['clear_cart'])) {
-    unset($_SESSION['cart']);
-    echo "All items in the cart have been removed.";
-}
-
-// Example: Clear all session data
-if (isset($_POST['clear_session'])) {
-    session_destroy();
-    $_SESSION = []; // Clear the session array
-    echo "All session data has been cleared.";
-}
 ?>
-
 
 
 
@@ -224,13 +205,6 @@ if (isset($_POST['clear_session'])) {
             </div>
         </div>
     </section>
-
-    <!-- FOR DEBUGGING PURPOSES: DELETE CART / RESTART SESSION-------------------------------------------------------------------------------->
-    <form method="POST" action="">
-    <button type="submit" name="clear_cart">Clear Cart</button>
-    <button type="submit" name="clear_session">Clear All Session Data</button>
-    </form>
-    <!------------------------------------------------------------------------------------------------------------------------------->
 
     <!--FOOTER SECTION-->
     <section>

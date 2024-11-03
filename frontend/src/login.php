@@ -30,22 +30,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $dbConnection = getDatabaseConnection();
 
         // Prepare the SQL statement to prevent SQL injection
-        $statement = $dbConnection->prepare("SELECT password FROM user WHERE username = ?");
+        $statement = $dbConnection->prepare("SELECT user_id, password FROM user WHERE username = ?");
         $statement->bind_param("s", $username);
         $statement->execute();
         $statement->store_result();
 
         if ($statement->num_rows > 0) {
             // User exists, now check the password
-            $statement->bind_result($hashed_password);
+            $statement->bind_result($user_id, $hashed_password);
             $statement->fetch();
 
             // Verify the password (if hashed, use password_verify)
             if ($password === $hashed_password) { // Change this if you're hashing passwords
                 $login_success = true;
-                $notification = "Login successful! Redirecting..."; // Set the notification message
-                // You can store the username in session if needed
-                $_SESSION['username'] = $username; // Example: Store username in session
+                // Store user information in session
+                $_SESSION['user_id'] = $user_id; // Store user ID in session
+
+                // Check for the cookie corresponding to this user
+                if (isset($_COOKIE["user_cart_" . $user_id])) {
+                    // Load the cart from the cookie
+                    $_SESSION['cart'] = json_decode($_COOKIE["user_cart_" . $user_id], true);
+                    // Optionally unset the cookie after loading it
+                    setcookie("user_cart_" . $user_id, "", time() - 3600, "/"); // Delete the cookie
+                } else {
+                    $_SESSION['cart'] = isset($_SESSION['cart']) ? $_SESSION['cart'] : []; // Initialize cart if not already set
+                }
+
+
             } else {
                 $password_error = "*Incorrect password.<br>";
             }
@@ -110,10 +121,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 </form>
 
+
                 <?php if ($login_success): ?>
                     <div class="notification" id="notification">
                         Login successful! You will be redirected to the main page shortly.
                     </div>
+                    <script>
+                        setTimeout(() => {
+                            window.location.href = 'home.html'; // Redirect to the desired page after successful login
+                        }, 3000);
+                    </script>
+
                 <?php endif; ?>
 
 

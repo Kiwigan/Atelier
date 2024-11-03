@@ -124,18 +124,22 @@ function displayrating($rating){
                     <div class="row" style="justify-content: start;">
 
                         <?php
+                        session_start(); // Start the session
 
-                            session_start(); // Start the session
-                            $servername = "localhost";
-                            $username = "root";
-                            $password = "";
-                            $dbname = "atelier";
+                        // Database connection settings
+                        $servername = "localhost";
+                        $username = "root";
+                        $password = "";
+                        $dbname = "atelier";
+                        
+                        // Create connection
+                        $conn = new mysqli($servername, $username, $password, $dbname, '3306');
+                        
+                        // Check connection
+                        if ($conn->connect_error) {
+                            die("Connection failed: " . $conn->connect_error);
+                        }
 
-                            $conn = new mysqli($servername, $username, $password, $dbname, '3325');
-
-                            if ($conn->connect_error) {
-                                die("Connection failed: " . $conn->connect_error);
-                            }
 
                         // Check if a gender filter has been set
                         $gender_filter = isset($_POST['gender']) ? $_POST['gender'] : '';
