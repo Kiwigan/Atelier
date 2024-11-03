@@ -34,7 +34,7 @@ function displayrating($rating){
     <!--====== Lineicons CSS ======-->
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
 
-    <title>My Home Page</title>
+    <title>Products</title>
 
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
@@ -64,7 +64,7 @@ function displayrating($rating){
 <body>
     <!--HEADER SECTION-->
     <section>
-        <header>
+        <header class="header">
             <div class="container">
                 <nav class="navbar">
                     <div class="logo">
@@ -75,16 +75,25 @@ function displayrating($rating){
                     <div class="nav-items">
                         <a href="home.html">Home</a>
                         <a href="product_page.php" class="active">Products</a>
-                        <a href="orders.html">Orders</a>
+                        <a href="orders.php">Orders</a>
                         <a href="#">Contact Us</a>
                     </div>
                     <div class="icon-items">
-                        <a href="#"><img src="./assets/icons/search.png" height="27"></a>
-                        <a href="#"><img src="./assets/icons/profile.png" height="30"></a>
-                        <a href="cart.php"><img src="./assets/icons/cart.png" height="30"></a>
+                        <a href="#"><i class="bi bi-search"></i></a>
+                        <div class="profile-dropdown">
+                            <a href="#"><i class="bi bi-person-circle"></i></a>
+                            <div class="dropdown-content">
+                                <a href="profile.html">Profile</a>
+                                <a href="settings.html">Settings</a>
+                                <a href="login.php">Login</a>
+                                <a href="logout.php">Logout</a>
+                            </div>
+                        </div>
+                        <a href="cart.php"><i class="bi bi-bag" ></i></a>
 
                     </div>
                 </nav>
+
             </div>
         </header>
     </section>
@@ -124,8 +133,6 @@ function displayrating($rating){
                     <div class="row" style="justify-content: start;">
 
                         <?php
-                        session_start(); // Start the session
-
                         // Database connection settings
                         $servername = "localhost";
                         $username = "root";

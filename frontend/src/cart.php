@@ -82,17 +82,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
     <title>Cart</title>
 
-    <Style>
-        .remove-btn {
-            color: red;
-            cursor: pointer;
-        }
-    </Style>
 </head>
 <body>
-    <!--HEADER SECTION-->
-    <section>
-        <header>
+<section>
+        <header class="header">
             <div class="container">
                 <nav class="navbar">
                     <div class="logo">
@@ -101,18 +94,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
                     </a>
                     </div>
                     <div class="nav-items">
-                        <a href="home.html">Home</a>
-                        <a href="#">About</a>
+                        <a href="home.html" class="active">Home</a>
                         <a href="product_page.php">Products</a>
+                        <a href="orders.php">Orders</a>
                         <a href="#">Contact Us</a>
                     </div>
                     <div class="icon-items">
-                        <a href="#"><img src="./assets/icons/search.png" height="27"></a>
-                        <a href="#"><img src="./assets/icons/profile.png" height="30"></a>
-                        <a href="cart.php"><img src="./assets/icons/cart.png" height="30"></a>
+                        <a href="#"><i class="bi bi-search"></i></a>
+                        <div class="profile-dropdown">
+                            <a href="#"><i class="bi bi-person-circle"></i></a>
+                            <div class="dropdown-content">
+                                <a href="profile.html">Profile</a>
+                                <a href="settings.html">Settings</a>
+                                <a href="login.php">Login</a>
+                                <a href="logout.php">Logout</a>
+                            </div>
+                        </div>
+                        <a href="cart.php"><i class="bi bi-bag" ></i></a>
 
                     </div>
                 </nav>
+
             </div>
         </header>
     </section>
@@ -162,10 +164,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
                                 <td style="width: 20%;">
                                     <h5 class="cart-subtotal">$<?php echo number_format($item['total_price'], 2); ?></h5>
                                 </td>
-                                <td>
+                                <td style= "text-align: center;">
                                     <form method="POST" action="cart.php">
                                     <input type="hidden" name="remove_product_id" value="<?php echo $item['product_id']; ?>">
-                                    <button type="submit" class="remove-btn">×</button>
+                                    <button type="submit" class="remove-btn"><i class="bi bi-x-lg"></i></button>
                                     </form>
                                 </td>
                             </tr>
@@ -206,7 +208,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
         </div>
     </section>
 
-    <!--FOOTER SECTION-->
     <section>
         <footer class="footer-area footer-one">
             <div class="footer-widget">
@@ -220,8 +221,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
                             </a>
                         </div>
                         <p class="text">
-                                Maximizing Profits, Ensuring Compliance — <br>
-                                Your Trusted Partner in Accounting and Advisory
+                            The Atelier, a place for creative dialogues — <br>
+                            Where heritage meets modernity
                         </p>
                         </div>
                         <div class="footer-app-store">
@@ -266,11 +267,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
                         <h6 class=" footer-title">Help & Support</h6>
                         <ul>
                             <li>
-                                <i class="lni lni-map-marker"></i> Madison Street, NewYork,
-                                USA
+                                <i class="lni lni-map-marker"></i> 107 Corporation Walk, 618482
                             </li>
-                            <li><i class="lni lni-phone-set"></i> +88 556 88545</li>
-                            <li><i class="lni lni-envelope"></i> support@ayroui.com</li>
+                            <li><i class="lni lni-phone-set"></i> +65 9866 1950</li>
+                            <li><i class="lni lni-envelope"></i> Atelier@Noire.com</li>
                         </ul>
                         </div>
                         <!-- End Footer Contact -->
@@ -281,20 +281,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
             <!-- container -->
             </div>
             <!-- footer widget -->
-            <div class="footer-copyright bg-dark">
+            <div class="footer-copyright">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div
-                        class="
-                        copyright
-                        text-center
-                        d-md-flex
-                        justify-content-between
-                        align-items-center
-                        "
-                        >
+                <div class="row" style="justify-content: space-between; align-items: center;">
+                    <div class="col-8">
                         <p class="text text-white">Copyright © 2024 <i>Keegan.</i> All Rights Reserved</p>
+                    </div>
+                    <div class="col-4" style="text-align: right;">
                         <ul class="social">
                             <li>
                                 <a href="javascript:void(0)">
@@ -317,7 +310,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
                                     ></a>
                             </li>
                         </ul>
-                        </div>
+                    </div>
                         <!-- copyright -->
                     </div>
                 </div>
@@ -330,14 +323,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
         <!--====== FOOTER ONE PART ENDS ======-->
     </section>
 
-    <!-- JS to remove item from cart -->
-    <script>
-        function removeFromCart(cartId) {
-            if (confirm("Are you sure you want to remove this item from your cart?")) {
-                window.location.href = "remove_from_cart.php?cart_id=" + cartId;
-            }
-        }
-    </script>
 </body>
 </html>
 

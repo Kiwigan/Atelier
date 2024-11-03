@@ -1,24 +1,4 @@
 <?php
-function displayrating($rating){
-    echo "<div class='ratings'>";
-    for($i = $rating; $i >= 1; $i--){
-        echo "<i class='bi bi-star-fill'></i>&nbsp";
-    }
-    if(($rating*10)%10 != 0){
-        echo "<i class='bi bi-star-half'></i>&nbsp";
-    }
-    $remainder = 5 - floor($rating);
-    if($remainder > 0){
-        for($i = $remainder; $i>0; $i--){
-            echo "<i class='bi bi-star'></i>&nbsp";
-        }
-    }
-    echo "</div>";
-
-}
-?>
-
-<?php
 session_start(); // Start the session
 
 // Database connection settings
@@ -36,86 +16,58 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Check if product_id is in the URL
-if (isset($_GET['product_id'])) {
-    $url_product_id = intval($_GET['product_id']);
-    
-    // Fetch product details
-    $sql = "SELECT * FROM perfumes WHERE product_id = $url_product_id";
-    $result = $conn->query($sql);
+$user_id = $_SESSION['user_id']; // Assuming user_id is stored in session
 
-    if ($result->num_rows > 0) {
-        $product = $result->fetch_assoc();
-    } else {
-        echo "<p>Product not found.</p>";
-        exit;
-    }
-} else {
-    echo "<p>No product specified.</p>";
-    exit;
+// Prepare SQL statement
+$sql = "SELECT 
+            o.order_id,
+            o.order_date,
+            o.total_price AS order_total_price,
+            o.status,
+            oi.quantity,
+            oi.total_price AS item_total_price,
+            p.product_name,
+            p.product_price,
+            p.product_image
+        FROM 
+            orders o
+        JOIN 
+            order_items oi ON o.order_id = oi.order_id
+        JOIN 
+            perfumes p ON oi.product_id = p.product_id
+        WHERE 
+            o.user_id = ?
+        ORDER BY 
+            o.order_date DESC";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Create an array to hold orders grouped by order_id
+$orders = [];
+while ($row = $result->fetch_assoc()) {
+    $orders[$row['order_id']][] = $row; // Grouping items by order_id
 }
 
-//Process form add to cart submission
-if (isset($_POST['add_to_cart'])) {
-    // Retrieve product details from form
-    $form_product_id = $_POST['product_id'];
-    $quantity = $_POST['quantity'];
-    $product_price = $_POST['product_price'];
-    $total_price = $quantity * $product_price;
-
-    // Initialize cart in session if it doesn't exist
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
-
-    // Check if the product is already in the cart
-    if (isset($_SESSION['cart'][$form_product_id])) {
-        // If product exists, update quantity and total price
-        $_SESSION['cart'][$form_product_id]['quantity'] += $quantity;
-        $_SESSION['cart'][$form_product_id]['total_price'] += $total_price;
-    } else {
-    
-        // Add item to cart session
-        $_SESSION['cart'][$form_product_id] = [
-            'product_id' => $form_product_id,
-            'quantity' => $quantity,
-            'total_price' => $total_price,
-            'product_price' => $product['product_price'],
-            'product_name' => $product['product_name'], // Add product name if needed
-            'product_image' => $product['product_image'],
-            // You can add more product details as needed
-        ];
-    }
-
-    // Success message with JavaScript alert, Returns to same page after a 0.2 second delay
-    echo "<script>
-        alert('Item successfully added to cart!');
-        window.location.href = 'product_page.php?product_id=" . $form_product_id . "';
-      </script>";
-
-    exit(); // End script to prevent further execution
-}
-
-$conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $product['product_name']; ?> - Details</title>
-    <link rel="stylesheet" href="index.css">
+    <link rel = "stylesheet" href = "index.css">
     <link rel="icon" href="assets/logos/logo-light.png" type="image/png">
-
+    
     <!--====== BootStrap Icons (NOTE: THIS IS NOT BOOTSTRAP FRAMEWORK, JUST ITS ICONS)======-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!--====== Lineicons CSS ======-->
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
-    <title>Product Details</title>
-
+    <title>Orders</title>
 
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
@@ -139,11 +91,9 @@ $conn->close();
             lastScrollTop = scrollTop;
           });
         });
-    </script>
+      </script>
 </head>
-
 <body>
-    <!--HEADER SECTION-->
     <section>
         <header class="header">
             <div class="container">
@@ -155,8 +105,8 @@ $conn->close();
                     </div>
                     <div class="nav-items">
                         <a href="home.html">Home</a>
-                        <a href="product_page.php" class="active">Products</a>
-                        <a href="orders.php">Orders</a>
+                        <a href="product_page.php">Products</a>
+                        <a href="orders.php" class="active">Orders</a>
                         <a href="#">Contact Us</a>
                     </div>
                     <div class="icon-items">
@@ -180,49 +130,62 @@ $conn->close();
     </section>
 
     <section>
-        <div class="container">
-            <div class="row">
-                <div class="col-7" style="padding-right: 80px; display: flex; justify-content: center;">
-                    <img src="<?php echo $product['product_image']; ?>" alt="<?php echo $product['product_name']; ?>" class="product-detail-image">
-                </div>
-                <div class="col-5">
-                    <h1><?php echo $product['product_name']; ?></h1> 
-                    <h4 style="padding-bottom:5px;">$<?php echo number_format($product['product_price'], 2); ?></h4>
-                    <?php displayrating($product['product_rating']); ?>
-                    <br>
-                    <hr>
-                    <p style="padding-top: 30px; padding-bottom: 30px;"><?php echo $product['product_details']; ?></p>
-                    
+        <div class="container" style="padding-top: 50px; padding-bottom: 50px;">
+            <h2 class="title_heading-2" style="padding:bottom: 20px;">Your Orders &nbsp;&boxh;&boxh;&boxh;&boxh;&boxh;&boxh;</h2>
+            <?php if (empty($orders)): ?>
+                <p>You have not made any orders yet.</p>
+            <?php else: ?>
+                <?php foreach ($orders as $order_id => $items): ?>
+                    <h3 style="padding-top: 35px;">Order ID: <?php echo htmlspecialchars($order_id); ?></h3>
+                    <table style="width: 100%; margin-top: 5px; margin-bottom: 30px;">
+                        <tr>
+                            <th style="width: 10%;">Product</th>
+                            <th style="width: 25%;"></th>
+                            <th style="width: 15%;">Total</th>
+                            <th style="width: 20%;">Status</th>
+                            <th style="width: 15%;">Order Date</th>
+                            <th style="width: 15%;"></th>
+                        </tr>
+                        <!--Cart Item-->
 
-                    <b>
-                        <span id="sold-no">17</span>
-                        sold in last
-                        <span id="hour-no">24</span>
-                        Hour
-                    </b>
-
-                    <form action="" method="POST">
-                        <input type="hidden" name="product_id" value="<?php echo $url_product_id; ?>">
-                        <input type="hidden" name="product_price" value="<?php echo $product['product_price']; ?>">
-
-                        <div class="row" style="padding-top: 30px;">
-                            <div class="col-2" style="display: flex; flex-wrap: wrap;">
-                                <input type="number" name="quantity" value="1" min="1" class="quantityfield" style="width: 100%; height: 45px; min-width:60px;">
-                            </div>
-                            <div class="col-10" style="display: flex; flex-wrap: wrap;">
-                                <button type="submit" name="add_to_cart" class="primary-btn addtocart-btn" value="Add to Cart">
-                                    Add to Cart
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+                        <?php foreach ($items as $item): ?>
+                            <tr>
+                                <td>
+                                    <img src="<?php echo htmlspecialchars($item['product_image']); ?>" alt="Product Image">
+                                </td>
+                                <td>
+                                    <h4><?php echo htmlspecialchars($item['product_name']); ?></h4>
+                                    <div class="row">
+                                    <h4><span class="price">$<?php echo number_format($item['product_price'], 2); ?></span>&nbsp;&nbsp;Quantity: <span class="quantity"><?php echo htmlspecialchars($item['quantity']); ?></span></h4>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h4><span class="total-price">$<?php echo number_format($item['item_total_price'], 2); ?></span></h4>
+                                </td>
+                                <td>
+                                    <div class="row" style="justify-content: start;">
+                                        <i class="bi bi-dot"></i>
+                                        <span><?php echo htmlspecialchars($item['status']); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p><span class="order-time"><?php echo date("d-M-Y", strtotime($item['order_date'])); ?></span></p>
+                                </td>
+                                
+                                <td style="text-align: end;">
+                                    <button class="btn primary-btn">Track Order</button>
+                                </td>
+                            </tr>
+                            <!--Cart Item End-->
+                        <?php endforeach; ?>                         
+                    </table>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </section>
+</body>
 
-    <!--FOOTER SECTION-->
-    <section>
+<section>
         <footer class="footer-area footer-one">
             <div class="footer-widget">
             <div class="container">
@@ -235,8 +198,8 @@ $conn->close();
                             </a>
                         </div>
                         <p class="text">
-                                Maximizing Profits, Ensuring Compliance — <br>
-                                Your Trusted Partner in Accounting and Advisory
+                            The Atelier, a place for creative dialogues — <br>
+                            Where heritage meets modernity
                         </p>
                         </div>
                         <div class="footer-app-store">
@@ -281,11 +244,10 @@ $conn->close();
                         <h6 class=" footer-title">Help & Support</h6>
                         <ul>
                             <li>
-                                <i class="lni lni-map-marker"></i> Madison Street, NewYork,
-                                USA
+                                <i class="lni lni-map-marker"></i> 107 Corporation Walk, 618482
                             </li>
-                            <li><i class="lni lni-phone-set"></i> +88 556 88545</li>
-                            <li><i class="lni lni-envelope"></i> support@ayroui.com</li>
+                            <li><i class="lni lni-phone-set"></i> +65 9866 1950</li>
+                            <li><i class="lni lni-envelope"></i> Atelier@Noire.com</li>
                         </ul>
                         </div>
                         <!-- End Footer Contact -->
@@ -296,20 +258,13 @@ $conn->close();
             <!-- container -->
             </div>
             <!-- footer widget -->
-            <div class="footer-copyright bg-dark">
+            <div class="footer-copyright">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div
-                        class="
-                        copyright
-                        text-center
-                        d-md-flex
-                        justify-content-between
-                        align-items-center
-                        "
-                        >
+                <div class="row" style="justify-content: space-between; align-items: center;">
+                    <div class="col-8">
                         <p class="text text-white">Copyright © 2024 <i>Keegan.</i> All Rights Reserved</p>
+                    </div>
+                    <div class="col-4" style="text-align: right;">
                         <ul class="social">
                             <li>
                                 <a href="javascript:void(0)">
@@ -332,7 +287,7 @@ $conn->close();
                                     ></a>
                             </li>
                         </ul>
-                        </div>
+                    </div>
                         <!-- copyright -->
                     </div>
                 </div>
@@ -344,6 +299,10 @@ $conn->close();
         </footer>
         <!--====== FOOTER ONE PART ENDS ======-->
     </section>
-</body>
 </html>
 
+<?php
+// Close connection
+$stmt->close();
+$conn->close();
+?>

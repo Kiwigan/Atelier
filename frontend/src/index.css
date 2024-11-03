@@ -243,6 +243,61 @@ ul li label{
   transition: opacity 0.5s; /* Fade effect */
 }
 
+.bi-search, .bi-person-circle, .bi-bag {
+  font-size: 24px;
+  color: #212427;
+  transition: 0.3s ease;
+}
+.bi-search:hover, .bi-person-circle:hover, .bi-bag:hover {
+  color: var(--primary-dark);
+}
+
+/* Position the dropdown content below the profile icon */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 67px; /* Adjust as needed to position below the icon */
+  left: 50%; /* Center horizontally relative to the parent */
+  transform: translateX(-50%); /* Offset to center */
+  background-color: var(--light-3);
+  min-width: 150px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 2px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Styling for dropdown links */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+/* Show dropdown content on hover */
+.profile-dropdown:hover .dropdown-content {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* Delay hiding */
+.profile-dropdown .dropdown-content {
+  transition-delay: 0.2s;
+}
+
 
 /*---------ROWS-------------*/
   .row{
@@ -434,14 +489,15 @@ table{
   font-size: 17px;
 }
 
-.remove-cross{
+.remove-btn{
+  all: unset;
   color: var(--base);
   transition: all 0.3s ease-out 0s;
 }
 
-
-.remove-cross:hover{
+.remove-btn:hover{
   color: var(--primary);
+  cursor: pointer;
 }
 
 .input-wrapper{

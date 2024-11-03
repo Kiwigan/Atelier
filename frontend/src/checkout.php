@@ -28,6 +28,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['place_order'])) {
     $city = $_POST['city'];
     $postal_code = $_POST['postal_code'];
 
+    // Check if user_id is set in the session
+    if (isset($_SESSION['user_id'])) {
+        $user_id = $_SESSION['user_id'];
+    } else {
+        echo "User not logged in.";
+        exit;
+    }
+
     // Calculate total price from the cart session
     $total_price = 0;
     foreach ($_SESSION['cart'] as $item) {
@@ -38,9 +46,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['place_order'])) {
     $shipping_fee = 10; // Define the shipping fee
     $total_price += $shipping_fee;
 
+    // Default status for new orders
+    $status = 'Order Placed';
+
     // Insert order details into orders table
-    $stmt = $conn->prepare("INSERT INTO orders (first_name, last_name, email, address, country, city, postal_code, total_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssssd", $first_name, $last_name, $email, $address, $country, $city, $postal_code, $total_price);
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, first_name, last_name, email, address, country, city, postal_code, total_price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("isssssssds",$user_id, $first_name, $last_name, $email, $address, $country, $city, $postal_code, $total_price, $status);
     $stmt->execute();
     
     // Get the last inserted order ID
