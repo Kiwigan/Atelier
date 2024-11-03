@@ -1,5 +1,6 @@
 <?php
-include('./connect.php');
+
+
 $username = "";
 $password = "";
 $confirm_password = "";
@@ -18,12 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validate email format
     if (empty($username)) {
-        $username_error = "*Please enter your email.<br>";
+        $username_error = "*Please enter your email.";
     } elseif (!filter_var($username, FILTER_VALIDATE_EMAIL)) {
         $username_error = "*Please enter a valid email address.<br>";
     }
 
-    
+    include('./connect.php');
     $dbConnection = getDatabaseConnection();
 
     $statement = $dbConnection -> prepare("SELECT user_id FROM user WHERE username = ?");
@@ -34,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $statement->store_result();
     if($statement->num_rows>0) {
-        $username_error = "Email is already used<br>";
+        $username_error = "Email is already used";
         $error = true;
     }
 
@@ -88,6 +89,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
 
     <title>Register</title>
+
+    <style>
+        .notification {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            top: -100px; /* Place it at the bottom */
+            right: 0px; /* Place it at the right */
+            background-color: #4CAF50; /* Green */
+            color: white; /* White text */
+            padding: 15px; /* Some padding */
+            border-radius: 5px; /* Rounded corners */
+            z-index: 1000; /* Sit on top */
+            transition: opacity 0.5s; /* Fade effect */
+        }
+    </style>
 
     <script>
         document.querySelector('form').addEventListener('submit', function(event) {
@@ -159,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 setTimeout(() => {
                     window.location.href = 'login.php'; // Redirect to login page after fade out
                 }, 500); // Wait for fade out to finish
-            }, 1500); // Show for 3 seconds
+            }, 3000); // Show for 3 seconds
         <?php endif; ?>
     </script>
 </body>
