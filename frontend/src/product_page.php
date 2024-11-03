@@ -1,3 +1,17 @@
+<?php
+function displayrating($rating){
+    echo "<div class='ratings'>";
+    for($i = $rating; $i >= 1; $i--){
+        echo "<i class='bi bi-star-fill'></i>";
+    }
+    if(($rating*10)%10 != 0){
+        echo "<i class='bi bi-halfstar-fill'></i>";
+    }
+    echo "</div>";
+
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +29,8 @@
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
 
     <title>My Home Page</title>
+
+    
 </head>
 <body>
     <!--HEADER SECTION-->
@@ -74,23 +90,13 @@
                         </form>
                     </div>
                 </div>
-                
-                <div class="product-container">
+                <div class="col-10">
                     <h1>Perfume Collection</h1>
-                    <div class="products-grid">
+                    <div class="row" style="justify-content: start;">
 
                         <?php
-                        session_start(); // Start the session
-                        $servername = "localhost";
-                        $username = "root";
-                        $password = "";
-                        $dbname = "atelier";
-                        
-                        $conn = new mysqli($servername, $username, $password, $dbname);
-                        
-                        if ($conn->connect_error) {
-                            die("Connection failed: " . $conn->connect_error);
-                        }
+
+                        include('./connect.php');
 
                         // Check if a gender filter has been set
                         $gender_filter = isset($_POST['gender']) ? $_POST['gender'] : '';
@@ -106,25 +112,20 @@
                         if ($result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
                                 // Wrap each product card in an <a> tag
-                                
+                                echo "<div class='col-4'>";
                                 echo "<a href='product_details.php?product_id=" . $row['product_id'] . "' style='text-decoration: none; color: inherit;'>";
 
-                                echo "<div class='product-card'>";
+                                echo "<div class='card'>";
                                 echo "<img src='" . $row['product_image'] . "' alt='" . $row['product_name'] . "' class='product-image'>";
-                                echo "<h2 class='product-name'>" . $row['product_name'] . "</h2>";
-                                echo "<p class='product-price'>$" . number_format($row['product_price'], 2) . "</p>";
-                                echo "<p class='product-details'>" . $row['product_details'] . "</p>";
-                                echo "<p class='product-rating'>Rating: " . number_format($row['product_rating'], 1) . " / 5.0</p>";
-                                
-                                // Add to Cart Form
                                 echo "<form method='POST' action=''>";
-                                echo "<input type='hidden' name='product_id' value='" . $row['product_id'] . "'>";
-                                echo "<input type='hidden' name='quantity' value='1'>"; // Default quantity of 1
-                                echo "<input type='hidden' name='product_price' value='" . $row['product_price'] . "'>";
-                                echo "<input type='hidden' name='product_name' value='" . $row['product_name'] . "'>";
-                                echo "<input type='hidden' name='product_image' value='" . $row['product_image'] . "'>";
-                                echo "<button type='submit' name='add_to_cart' class='add-to-cart-btn'>Add to Cart</button>";
-                                echo "</form>";
+                                echo "<div class='card-body'>";
+                                echo "<h2 class='card-title'>" . $row['product_name'] . "</h2>";
+                                displayrating(number_format($row['product_rating'], 1));
+                                echo "<p class='card-price'>$" . number_format($row['product_price'], 2) . "</p>";
+                                /*echo "<button type='submit' name='add_to_cart' class='add-to-cart-btn'>Add to Cart</button>";*/
+                                echo "</div>";
+                               echo "</form>";
+                                echo "</div>";
                                 echo "</div>";
                             }
                         } else {
@@ -298,4 +299,5 @@
         <!--====== FOOTER ONE PART ENDS ======-->
     </section>
 </body>
+
 </html>

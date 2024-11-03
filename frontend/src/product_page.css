@@ -1,11 +1,5 @@
 /* style.css */
 
-.product-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
 h1 {
     text-align: center;
     color: #333;

@@ -1,3 +1,62 @@
+<?php
+
+session_start(); // Start a session to store user information if needed
+include('./connect.php');
+
+$username = "";
+$password = "";
+
+$username_error = "";
+$password_error = "";
+$login_success = false; // Variable to check if login is successful
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Validate username and password input
+    if (empty($username)) {
+        $username_error = "*Please enter your email.";
+    }
+
+    if (empty($password)) {
+        $password_error = "*Please enter your password.";
+    }
+
+    // Check if there are no errors before processing
+    if (empty($username_error) && empty($password_error)) {
+        // Connect to the database
+        $dbConnection = getDatabaseConnection();
+
+        // Prepare the SQL statement to prevent SQL injection
+        $statement = $dbConnection->prepare("SELECT password FROM user WHERE username = ?");
+        $statement->bind_param("s", $username);
+        $statement->execute();
+        $statement->store_result();
+
+        if ($statement->num_rows > 0) {
+            // User exists, now check the password
+            $statement->bind_result($hashed_password);
+            $statement->fetch();
+
+            // Verify the password (if hashed, use password_verify)
+            if ($password === $hashed_password) { // Change this if you're hashing passwords
+                $login_success = true;
+                // Start a session or perform login actions here
+            } else {
+                $password_error = "*Incorrect password.";
+            }
+        } else {
+            $username_error = "*Username not found.";
+        }
+
+        $statement->close();
+        $dbConnection->close();
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -24,12 +83,12 @@
                     <h2 class="login-header">Login</h2>
                     <div class="inputbox">
                         <ion-icon name="mail-outline"></ion-icon>
-                        <input type="email" id="username" name="username" required >
+                        <input type="text" id="username" name="username">
                         <label for="">Email</label>
                     </div>
                     <div class="inputbox">
                         <ion-icon name="lock-closed-outline"></ion-icon>
-                        <input type="password" id="password" name="password" required>
+                        <input type="password" id="password" name="password">
                         <label for="">Password</label>
                     </div>
                     <div class="forget">
@@ -43,8 +102,24 @@
                         <p>Don't have a account <a href="register.html">Register</a></p>
                     </div>
                 </form>
+
+                <?php if ($login_success): ?>
+                    <div class="notification" id="notification">
+                        Login successful! Redirecting...
+                    </div>
+                    <script>
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.php'; // Redirect to the desired page after successful login
+                        }, 3000);
+                    </script>
+                <?php endif; ?>
+
+                
             </div>
         </div>
+    </section>
+</body>
+</html>
         <!--div class="container">
             <div class="row" style="justify-content: center;">
                 <div class="col-4" style=" display: flex; justify-content: center;">
@@ -77,6 +152,4 @@
                 </div>
             </div>
         </div-->
-    </section>
-</body>
-</html>
+
