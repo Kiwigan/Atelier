@@ -126,43 +126,43 @@ function displayrating($rating){
         <div class="container" style="padding-top: 70px; padding-bottom: 70px;">
             <div class="row" style="align-items: flex-start; justify-content: space-between;">
                 <div class="col-2" style="padding-top: 70px;">
-                <form method="POST" action="">
-                    <b>Gender</b>
-                    <div class="filters" style="border-style: groove; padding-left: 15px; padding-right: 15px;">
-                        <ul>
-                            <li>
-                                <input type="radio" id="Men" name="gender" value="Men" 
-                                    <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Men') echo 'checked'; ?>
-                                    onclick="this.form.submit()">
-                                <label for="Men">Men</label>
-                            </li>
-                            <li>
-                                <input type="radio" id="Women" name="gender" value="Women" 
-                                    <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Women') echo 'checked'; ?>
-                                    onclick="this.form.submit()">
-                                <label for="Women">Women</label>
-                            </li>
-                            <li>
-                                <input type="radio" id="Unisex" name="gender" value="Unisex" 
-                                    <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Unisex') echo 'checked'; ?>
-                                    onclick="this.form.submit()">
-                                <label for="Unisex">Unisex</label>
-                            </li>
-                        </ul>
-                    </div>
+                <form method="GET" action="">
+                        <b>Gender</b>
+                        <div class="filters" style="border-style: groove; padding-left: 15px; padding-right: 15px;">
+                            <ul>
+                                <li>
+                                    <input type="radio" id="Men" name="gender" value="Men" 
+                                        <?php if (isset($_GET['gender']) && $_GET['gender'] == 'Men') echo 'checked'; ?>
+                                        onclick="this.form.submit()">
+                                    <label for="Men">Men</label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="Women" name="gender" value="Women" 
+                                        <?php if (isset($_GET['gender']) && $_GET['gender'] == 'Women') echo 'checked'; ?>
+                                        onclick="this.form.submit()">
+                                    <label for="Women">Women</label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="Unisex" name="gender" value="Unisex" 
+                                        <?php if (isset($_GET['gender']) && $_GET['gender'] == 'Unisex') echo 'checked'; ?>
+                                        onclick="this.form.submit()">
+                                    <label for="Unisex">Unisex</label>
+                                </li>
+                            </ul>
+                        </div>
 
-                    <br>
+                        <br>
 
-                    <b>Price</b>
-                    <div class="filters" style="border-style: groove; padding: 15px;">
-                        <select name="sort_by" onchange="this.form.submit()">
-                            <option value="">Select</option>
-                            <option value="price_asc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
-                            <option value="price_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
-                            <option value="rating_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'rating_desc') echo 'selected'; ?>>Rating: High to Low</option>
-                        </select>
-                    </div>
-                </form>
+                        <b>Price</b>
+                        <div class="filters" style="border-style: groove; padding: 15px;">
+                            <select name="sort_by" onchange="this.form.submit()">
+                                <option value="">Select</option>
+                                <option value="price_asc" <?php if (isset($_GET['sort_by']) && $_GET['sort_by'] == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
+                                <option value="price_desc" <?php if (isset($_GET['sort_by']) && $_GET['sort_by'] == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
+                                <option value="rating_desc" <?php if (isset($_GET['sort_by']) && $_GET['sort_by'] == 'rating_desc') echo 'selected'; ?>>Rating: High to Low</option>
+                            </select>
+                        </div>
+                    </form>
             </div>
                 <div class="col-10" style="padding-left: 100px;">
 
@@ -175,13 +175,13 @@ function displayrating($rating){
                         <div>
                             <div class="row">
                                 <a href="product_page.php"><button class="clear-filter-btn">Clear Filters</button></a>
-                            <form action="search_results.php" method="POST">
-                                <input type="text" name="search_term" placeholder="Search products..." class="product-search">
-                            </form>
+
+                                <form action="search_results.php" method="POST">
+                                    <input type="text" name="search_term" placeholder="Search products..." class="product-search">
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-
                     <div class="row" style="justify-content: start; margin-left:-15px; margin-right:-15px;">
                         
 
@@ -193,7 +193,7 @@ function displayrating($rating){
                         $dbname = "atelier";
                         
                         // Create connection
-                        $conn = new mysqli($servername, $username, $password, $dbname, '3306');
+                        $conn = new mysqli($servername, $username, $password, $dbname, '3325');
                         
                         // Check connection
                         if ($conn->connect_error) {
@@ -211,8 +211,8 @@ function displayrating($rating){
 
 
                         // Check if a gender filter has been set
-                        $gender_filter = isset($_POST['gender']) ? $_POST['gender'] : '';
-                        $sort_by = isset($_POST['sort_by']) ? $_POST['sort_by'] : '';
+                        $gender_filter = isset($_GET['gender']) ? $_GET['gender'] : '';
+                        $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : '';
 
                         // Start building the base SQL query
                         $sql = "SELECT product_id, product_name, product_price, product_image, product_details, product_rating, gender FROM perfumes";
