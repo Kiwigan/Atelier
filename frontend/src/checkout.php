@@ -9,7 +9,7 @@ $dbname = "atelier";
 
 // Create connection
 
-$conn = new mysqli($servername, $username, $password, $dbname, '3325');
+$conn = new mysqli($servername, $username, $password, $dbname, '3306');
 
 
 // Check connection
@@ -32,7 +32,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['place_order'])) {
     if (isset($_SESSION['user_id'])) {
         $user_id = $_SESSION['user_id'];
     } else {
-        echo "User not logged in.";
+        echo "<p>You have to be logged in to make a purchase. Redirecting in 3 seconds...</p>";
+    echo "
+        <script>
+        setTimeout(function() {
+            window.location.href = 'home.php';
+        }, 3000);
+        </script>";
         exit;
     }
 

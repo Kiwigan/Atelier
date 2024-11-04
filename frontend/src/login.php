@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <script>
                         setTimeout(() => {
-                            window.location.href = 'home.html'; // Redirect to the desired page after successful login
+                            window.location.href = 'home.php'; // Redirect to the desired page after successful login
                         }, 3000);
                     </script>
 
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setTimeout(() => {
                 notification.style.opacity = 0; // Fade out effect
                 setTimeout(() => {
-                    window.location.href = 'home.html'; // Redirect to login page after fade out
+                    window.location.href = 'home.php'; // Redirect to login page after fade out
                 }, 500); // Wait for fade out to finish
             }, 1500); // Show for 3 seconds
         <?php endif; ?>

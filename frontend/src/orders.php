@@ -1,5 +1,7 @@
 <?php
 session_start(); // Start the session
+// Check if the user is logged in by checking if a session variable is set
+$is_logged_in = isset($_SESSION['user_id']);
 
 // Database connection settings
 $servername = "localhost";
@@ -104,10 +106,10 @@ while ($row = $result->fetch_assoc()) {
                     </a>
                     </div>
                     <div class="nav-items">
-                        <a href="home.html">Home</a>
+                        <a href="home.php">Home</a>
                         <a href="product_page.php">Products</a>
                         <a href="orders.php" class="active">Orders</a>
-                        <a href="#">Contact Us</a>
+                        <a href="contactus.html">Contact Us</a>
                     </div>
                     <div class="icon-items">
                         <a href="#"><i class="bi bi-search"></i></a>
@@ -116,8 +118,11 @@ while ($row = $result->fetch_assoc()) {
                             <div class="dropdown-content">
                                 <a href="profile.html">Profile</a>
                                 <a href="settings.html">Settings</a>
-                                <a href="login.php">Login</a>
-                                <a href="logout.php">Logout</a>
+                                <?php if ($is_logged_in): ?>
+                                    <a href="logout.php">Logout</a>
+                                <?php else: ?>
+                                    <a href="login.php">Login</a>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <a href="cart.php"><i class="bi bi-bag" ></i></a>
