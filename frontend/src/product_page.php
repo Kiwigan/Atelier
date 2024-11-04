@@ -1,4 +1,9 @@
 <?php
+session_start(); // Start the session
+// Check if the user is logged in by checking if a session variable is set
+$is_logged_in = isset($_SESSION['user_id']);
+
+
 function displayrating($rating){
     echo "<div class='ratings'>";
     for($i = $rating; $i >= 1; $i--){
@@ -88,17 +93,17 @@ function displayrating($rating){
                     </a>
                     </div>
                     <div class="nav-items">
-                        <a href="home.html">Home</a>
+                        <a href="home.php">Home</a>
                         <a href="product_page.php" class="active">Products</a>
                         <a href="orders.php">Orders</a>
-                        <a href="#">Contact Us</a>
+                        <a href="contactus.html">Contact Us</a>
                     </div>
                     <div class="icon-items">
-                        <!--
-                        <form action="search_results.php" method="GET">
+                        
+                        <form action="search_results.php" method="POST">
                         <input type="text" name="search_term" placeholder="Search products..." required>
                         <button type="submit">Search</button>
-                        </form> -->
+                        </form> 
                         
                         <a href="#"><i class="bi bi-search"></i></a>
                         <div class="profile-dropdown">
@@ -106,8 +111,11 @@ function displayrating($rating){
                             <div class="dropdown-content">
                                 <a href="profile.html">Profile</a>
                                 <a href="settings.html">Settings</a>
-                                <a href="login.php">Login</a>
-                                <a href="logout.php">Logout</a>
+                                <?php if ($is_logged_in): ?>
+                                    <a href="logout.php">Logout</a>
+                                <?php else: ?>
+                                    <a href="login.php">Login</a>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <a href="cart.php"><i class="bi bi-bag" ></i></a>
@@ -147,6 +155,7 @@ function displayrating($rating){
                             </li>
                         </ul>
                     </div>
+
                     <br>
 
                     <b>Price</b>
@@ -161,12 +170,12 @@ function displayrating($rating){
                 </form>
             </div>
                 <div class="col-10" style="padding-left: 100px;">
+
                     <h1>Perfume Collection</h1>
                     <div class="line" style="margin-bottom:50px;"></div>
                     <div class="row" style="justify-content: start; margin-left:-15px; margin-right:-15px;">
 
                         <?php
-
                         // Database connection settings
                         $servername = "localhost";
                         $username = "root";
@@ -174,7 +183,7 @@ function displayrating($rating){
                         $dbname = "atelier";
                         
                         // Create connection
-                        $conn = new mysqli($servername, $username, $password, $dbname, '3325');
+                        $conn = new mysqli($servername, $username, $password, $dbname, '3306');
                         
                         // Check connection
                         if ($conn->connect_error) {
@@ -229,13 +238,19 @@ function displayrating($rating){
                                 
                                 echo "<div class='col-4'>";
                                 echo "<form method='POST' action=''>";
+                                echo "<input type='hidden' name='product_name' value='". $row['product_name'] . "'>";
+                                echo "<input type='hidden' name='product_image' value='". $row['product_image'] . "'>";
+                                echo "<input type='hidden' name='product_id' value='". $row['product_id'] . "'>";
+                                echo "<input type='hidden' name='quantity' value='1'>";
+                                echo "<input type='hidden' name='product_price' value='" . $row['product_price'] ."'>";
+
                                 echo "<a href='product_details.php?product_id=" . $row['product_id'] . "' style='text-decoration: none; color: inherit;'>";
 
                                 echo "<div class='card'>";
                                 echo "<div class='product-image-container'>";
                                 echo "<img src='" . $row['product_image'] . "' alt='" . $row['product_name'] . "' class='product-image'>";
                                 echo "<div class='add-to-cart-overlay'>";
-                                echo  "<button type='submit' name='add_to_cart' class='add-to-cart-btn'>Add to Cart</button>";
+                                echo  "<button type='submit' name='add_to_cart' class='add-to-cart-btn' value='Add to Cart'>Add to Cart</button>";
                                 echo  "</div></div>";
                                 echo "<div class='card-body'>";
                                 echo "<h2 class='card-title'>" . $row['product_name'] . "</h2>";
@@ -278,7 +293,7 @@ function displayrating($rating){
 
                             // Initialize the cart in the session if it doesn't exist
                             if (!isset($_SESSION['cart'])) {
-                                $_SESSION['cart'] = array();
+                                $_SESSION['cart'] = [];
                             }
 
                             // Check if the product already exists in the cart
@@ -288,14 +303,14 @@ function displayrating($rating){
                                 $_SESSION['cart'][$product_id]['total_price'] += $total_price;
                             } else {
                                 // Add a new item to the cart
-                                $_SESSION['cart'][$product_id] = array(
+                                $_SESSION['cart'][$product_id] = [
                                     'product_id' => $product_id,
                                     'quantity' => $quantity,
                                     'total_price' => $total_price,
                                     'product_price' => $product_price, // Store the individual price for future reference
                                     'product_name' => $_POST['product_name'], // Assuming you have this input
                                     'product_image' => $_POST['product_image'], // Assuming you have this input
-                                );
+                                ];
                             }
 
                             echo "<script>
