@@ -100,11 +100,6 @@ function displayrating($rating){
                     </div>
                     <div class="icon-items">
                         
-                        <form action="search_results.php" method="POST">
-                        <input type="text" name="search_term" placeholder="Search products..." required>
-                        <button type="submit">Search</button>
-                        </form> 
-                        
                         <a href="#"><i class="bi bi-search"></i></a>
                         <div class="profile-dropdown">
                             <a href="#"><i class="bi bi-person-circle"></i></a>
@@ -171,9 +166,24 @@ function displayrating($rating){
             </div>
                 <div class="col-10" style="padding-left: 100px;">
 
-                    <h1>Perfume Collection</h1>
-                    <div class="line" style="margin-bottom:50px;"></div>
+                    <div class="row" style="justify-content; space-between;">
+                        <div>
+                            <h1>Perfume Collection</h1>
+                            <div class="line" style="margin-bottom:50px; width:80px;"></div>
+                        </div>
+
+                        <div>
+                            <div class="row">
+                                <a href="product_page.php"><button class="clear-filter-btn">Clear Filters</button></a>
+                            <form action="search_results.php" method="POST">
+                                <input type="text" name="search_term" placeholder="Search products..." class="product-search">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                     <div class="row" style="justify-content: start; margin-left:-15px; margin-right:-15px;">
+                        
 
                         <?php
                         // Database connection settings
@@ -340,8 +350,8 @@ function displayrating($rating){
                             </a>
                         </div>
                         <p class="text">
-                                Maximizing Profits, Ensuring Compliance — <br>
-                                Your Trusted Partner in Accounting and Advisory
+                            The Atelier, a place for creative dialogues — <br>
+                            Where heritage meets modernity
                         </p>
                         </div>
                         <div class="footer-app-store">
@@ -386,11 +396,10 @@ function displayrating($rating){
                         <h6 class=" footer-title">Help & Support</h6>
                         <ul>
                             <li>
-                                <i class="lni lni-map-marker"></i> Madison Street, NewYork,
-                                USA
+                                <i class="lni lni-map-marker"></i> 107 Corporation Walk, 618482
                             </li>
-                            <li><i class="lni lni-phone-set"></i> +88 556 88545</li>
-                            <li><i class="lni lni-envelope"></i> support@ayroui.com</li>
+                            <li><i class="lni lni-phone-set"></i> +65 9866 1950</li>
+                            <li><i class="lni lni-envelope"></i> Atelier@Noire.com</li>
                         </ul>
                         </div>
                         <!-- End Footer Contact -->
@@ -401,20 +410,13 @@ function displayrating($rating){
             <!-- container -->
             </div>
             <!-- footer widget -->
-            <div class="footer-copyright bg-dark">
+            <div class="footer-copyright">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div
-                        class="
-                        copyright
-                        text-center
-                        d-md-flex
-                        justify-content-between
-                        align-items-center
-                        "
-                        >
+                <div class="row" style="justify-content: space-between; align-items: center;">
+                    <div class="col-8">
                         <p class="text text-white">Copyright © 2024 <i>Keegan.</i> All Rights Reserved</p>
+                    </div>
+                    <div class="col-4" style="text-align: right;">
                         <ul class="social">
                             <li>
                                 <a href="javascript:void(0)">
@@ -437,7 +439,7 @@ function displayrating($rating){
                                     ></a>
                             </li>
                         </ul>
-                        </div>
+                    </div>
                         <!-- copyright -->
                     </div>
                 </div>

@@ -20,56 +20,6 @@ function displayrating($rating){
     echo "</div>";
 
 }
-
-// Database connection settings
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "atelier";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname, '3306');
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Start building the query
-$sql = "SELECT * FROM perfumes WHERE 1=1"; // Base query
-
-// Check if search term is set
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_term']) && !empty($_POST['search_term'])) {
-    $search_term = $conn->real_escape_string($_POST['search_term']);
-    $sql .= " AND product_name LIKE '%$search_term%'";
-}
-
-// Add gender filter
-if (isset($_POST['gender']) && !empty($_POST['gender'])) {
-    $gender_filter = $conn->real_escape_string($_POST['gender']);
-    $sql .= " AND gender = '$gender_filter'";
-}
-
-// Add sort logic
-if (isset($_POST['sort_by']) && !empty($_POST['sort_by'])) {
-    $sort_by = $_POST['sort_by'];
-    switch ($sort_by) {
-        case 'price_asc':
-            $sql .= " ORDER BY product_price ASC";
-            break;
-        case 'price_desc':
-            $sql .= " ORDER BY product_price DESC";
-            break;
-        case 'rating_desc':
-            $sql .= " ORDER BY product_rating DESC";
-            break;
-    }
-}
-$result = $conn->query($sql);
-
-// Close connection after fetching the results
-$conn->close();
-
 ?>
 
 
@@ -133,12 +83,6 @@ $conn->close();
                         <a href="contactus.html">Contact Us</a>
                     </div>
                     <div class="icon-items">
-                        
-                        <form action="search_results.php" method="POST">
-                        <input type="text" name="search_term" placeholder="Search products..." required>
-                        <button type="submit">Search</button>
-                        </form> 
-                        
                         <a href="#"><i class="bi bi-search"></i></a>
                         <div class="profile-dropdown">
                             <a href="#"><i class="bi bi-person-circle"></i></a>
@@ -163,48 +107,64 @@ $conn->close();
 
     <section>
         <div class="container" style="padding-top: 100px;">
-            <div class="row" style="align-items: flex-start;">
-                <div class="col-2">
+            <div class="row" style="align-items: flex-start; justify-content: space-between;">
+                <div class="col-2" style="padding-top: 70px;">
+                <form method="POST" action="">
+                    <b>Gender</b>
                     <div class="filters" style="border-style: groove; padding-left: 15px; padding-right: 15px;">
-                        <form method="POST" action="">
-                            <b>Gender</b>
-                            <ul>
-                                <li>
-                                    <input type="radio" id="Men" name="gender" value="Men" 
-                                        <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Men') echo 'checked'; ?>
-                                        onclick="this.form.submit()">
-                                    <label for="Men">Men</label>
-                                </li>
-                                <li>
-                                    <input type="radio" id="Women" name="gender" value="Women" 
-                                        <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Women') echo 'checked'; ?>
-                                        onclick="this.form.submit()">
-                                    <label for="Women">Women</label>
-                                </li>
-                                <li>
-                                    <input type="radio" id="Unisex" name="gender" value="Unisex" 
-                                        <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Unisex') echo 'checked'; ?>
-                                        onclick="this.form.submit()">
-                                    <label for="Unisex">Unisex</label>
-                                </li>
-                            </ul>
-
-
-                            <b>Price</b>
-                            <select name="sort_by" onchange="this.form.submit()">
-                                <option value="">Select</option>
-                                <option value="price_asc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
-                                <option value="price_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
-                                <option value="rating_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'rating_desc') echo 'selected'; ?>>Rating: High to Low</option>
-                            </select>
-
-                        </form>
+                        <ul>
+                            <li>
+                                <input type="radio" id="Men" name="gender" value="Men" 
+                                    <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Men') echo 'checked'; ?>
+                                    onclick="this.form.submit()">
+                                <label for="Men">Men</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="Women" name="gender" value="Women" 
+                                    <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Women') echo 'checked'; ?>
+                                    onclick="this.form.submit()">
+                                <label for="Women">Women</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="Unisex" name="gender" value="Unisex" 
+                                    <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Unisex') echo 'checked'; ?>
+                                    onclick="this.form.submit()">
+                                <label for="Unisex">Unisex</label>
+                            </li>
+                        </ul>
                     </div>
 
+                    <br>
+
+                    <b>Price</b>
+                    <div class="filters" style="border-style: groove; padding: 15px;">
+                        <select name="sort_by" onchange="this.form.submit()">
+                            <option value="">Select</option>
+                            <option value="price_asc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
+                            <option value="price_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
+                            <option value="rating_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'rating_desc') echo 'selected'; ?>>Rating: High to Low</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+                <div class="col-10" style="padding-left: 100px;">
+                    <div class="row" style="justify-content; space-between;">
+                        <div>
+                            <h1>Perfume Collection</h1>
+                            <div class="line" style="margin-bottom:50px; width:80px;"></div>
+                        </div>
+
+                        <div>
+                            <div class="row">
+                                <a href="product_page.php"><button class="clear-filter-btn">Clear Filters</button></a>
+                                <form action="search_results.php" method="POST">
+                                <input type="text" name="search_term" placeholder="Search products..." class="product-search">
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-10">
-                    <h1>Perfume Collection</h1>
-                    <div class="row" style="justify-content: start;">
+
+                    <div class="row" style="justify-content: start; margin-left:-15px; margin-right:-15px;">
 
                         <?php
                         // Database connection settings
@@ -221,8 +181,37 @@ $conn->close();
                             die("Connection failed: " . $conn->connect_error);
                         }
 
-                        
+                        // Base query
+                        $sql = "SELECT * FROM perfumes WHERE 1=1";
 
+                        // Check and append filters and sorting criteria
+                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                            if (isset($_POST['search_term']) && !empty($_POST['search_term'])) {
+                                $search_term = $conn->real_escape_string($_POST['search_term']);
+                                $sql .= " AND product_name LIKE '%$search_term%'";
+                            }
+                            if (isset($_POST['gender']) && !empty($_POST['gender'])) {
+                                $gender_filter = $conn->real_escape_string($_POST['gender']);
+                                $sql .= " AND gender = '$gender_filter'";
+                            }
+                            if (isset($_POST['sort_by']) && !empty($_POST['sort_by'])) {
+                                $sort_by = $_POST['sort_by'];
+                                switch ($sort_by) {
+                                    case 'price_asc':
+                                        $sql .= " ORDER BY product_price ASC";
+                                        break;
+                                    case 'price_desc':
+                                        $sql .= " ORDER BY product_price DESC";
+                                        break;
+                                    case 'rating_desc':
+                                        $sql .= " ORDER BY product_rating DESC";
+                                        break;
+                                }
+                            }
+                        }
+
+                        $result = $conn->query($sql);
+                        
                         if ($result && $result->num_rows > 0) {
                             while ($product = $result->fetch_assoc()) {
                                 // Wrap each product card in an <a> tag
@@ -314,8 +303,8 @@ $conn->close();
                             </a>
                         </div>
                         <p class="text">
-                                Maximizing Profits, Ensuring Compliance — <br>
-                                Your Trusted Partner in Accounting and Advisory
+                            The Atelier, a place for creative dialogues — <br>
+                            Where heritage meets modernity
                         </p>
                         </div>
                         <div class="footer-app-store">
@@ -360,11 +349,10 @@ $conn->close();
                         <h6 class=" footer-title">Help & Support</h6>
                         <ul>
                             <li>
-                                <i class="lni lni-map-marker"></i> Madison Street, NewYork,
-                                USA
+                                <i class="lni lni-map-marker"></i> 107 Corporation Walk, 618482
                             </li>
-                            <li><i class="lni lni-phone-set"></i> +88 556 88545</li>
-                            <li><i class="lni lni-envelope"></i> support@ayroui.com</li>
+                            <li><i class="lni lni-phone-set"></i> +65 9866 1950</li>
+                            <li><i class="lni lni-envelope"></i> Atelier@Noire.com</li>
                         </ul>
                         </div>
                         <!-- End Footer Contact -->
@@ -375,20 +363,13 @@ $conn->close();
             <!-- container -->
             </div>
             <!-- footer widget -->
-            <div class="footer-copyright bg-dark">
+            <div class="footer-copyright">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div
-                        class="
-                        copyright
-                        text-center
-                        d-md-flex
-                        justify-content-between
-                        align-items-center
-                        "
-                        >
+                <div class="row" style="justify-content: space-between; align-items: center;">
+                    <div class="col-8">
                         <p class="text text-white">Copyright © 2024 <i>Keegan.</i> All Rights Reserved</p>
+                    </div>
+                    <div class="col-4" style="text-align: right;">
                         <ul class="social">
                             <li>
                                 <a href="javascript:void(0)">
@@ -411,7 +392,7 @@ $conn->close();
                                     ></a>
                             </li>
                         </ul>
-                        </div>
+                    </div>
                         <!-- copyright -->
                     </div>
                 </div>
