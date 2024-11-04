@@ -10,7 +10,7 @@ $dbname = "atelier";
 
 // Create connection
 
-$conn = new mysqli($servername, $username, $password, $dbname, '3325');
+$conn = new mysqli($servername, $username, $password, $dbname, '3306');
 
 // Check connection
 if ($conn->connect_error) {
@@ -133,7 +133,7 @@ $conn->close();
                         </p>
                         <p>Your order number is <span><?php echo htmlspecialchars($order_id); ?></span></p>
                         <div class="options" style="padding-top: 20px;">
-                            <a href="home.html"><button class="btn primary-btn">Back to Home</button></a>
+                            <a href="home.php"><button class="btn primary-btn">Back to Home</button></a>
                             <a href="orders.php"><button class="btn primary-btn">View Orders</button></a>
                         </div>
                     </div>
