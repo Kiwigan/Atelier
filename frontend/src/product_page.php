@@ -62,6 +62,22 @@ function displayrating($rating){
             lastScrollTop = scrollTop;
           });
         });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Restore the scroll position if it exists
+            if (sessionStorage.getItem("scrollPosition")) {
+                window.scrollTo(0, sessionStorage.getItem("scrollPosition"));
+            }
+
+            // Save scroll position before the page unloads
+            window.addEventListener("beforeunload", function() {
+                sessionStorage.setItem("scrollPosition", window.scrollY);
+            });
+        });
+        window.addEventListener("load", function() {
+            // Remove the scroll position after loading to avoid unexpected behavior
+            sessionStorage.removeItem("scrollPosition");
+        });
       </script>
     
 </head>
@@ -112,49 +128,52 @@ function displayrating($rating){
     </section>
 
     <section>
-        <div class="container" style="padding-top: 100px;">
-            <div class="row" style="align-items: flex-start;">
-                <div class="col-2">
+        <div class="container" style="padding-top: 70px; padding-bottom: 70px;">
+            <div class="row" style="align-items: flex-start; justify-content: space-between;">
+                <div class="col-2" style="padding-top: 70px;">
+                <form method="POST" action="">
+                    <b>Gender</b>
                     <div class="filters" style="border-style: groove; padding-left: 15px; padding-right: 15px;">
-                        <form method="POST" action="">
-                            <b>Gender</b>
-                            <ul>
-                                <li>
-                                    <input type="radio" id="Men" name="gender" value="Men" 
-                                        <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Men') echo 'checked'; ?>
-                                        onclick="this.form.submit()">
-                                    <label for="Men">Men</label>
-                                </li>
-                                <li>
-                                    <input type="radio" id="Women" name="gender" value="Women" 
-                                        <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Women') echo 'checked'; ?>
-                                        onclick="this.form.submit()">
-                                    <label for="Women">Women</label>
-                                </li>
-                                <li>
-                                    <input type="radio" id="Unisex" name="gender" value="Unisex" 
-                                        <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Unisex') echo 'checked'; ?>
-                                        onclick="this.form.submit()">
-                                    <label for="Unisex">Unisex</label>
-                                </li>
-                            </ul>
-
-
-                            <b>Price</b>
-                            <select name="sort_by" onchange="this.form.submit()">
-                                <option value="">Select</option>
-                                <option value="price_asc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
-                                <option value="price_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
-                                <option value="rating_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'rating_desc') echo 'selected'; ?>>Rating: High to Low</option>
-                            </select>
-
-                        </form>
+                        <ul>
+                            <li>
+                                <input type="radio" id="Men" name="gender" value="Men" 
+                                    <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Men') echo 'checked'; ?>
+                                    onclick="this.form.submit()">
+                                <label for="Men">Men</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="Women" name="gender" value="Women" 
+                                    <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Women') echo 'checked'; ?>
+                                    onclick="this.form.submit()">
+                                <label for="Women">Women</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="Unisex" name="gender" value="Unisex" 
+                                    <?php if (isset($_POST['gender']) && $_POST['gender'] == 'Unisex') echo 'checked'; ?>
+                                    onclick="this.form.submit()">
+                                <label for="Unisex">Unisex</label>
+                            </li>
+                        </ul>
                     </div>
 
-                </div>
-                <div class="col-10">
+                    <br>
+
+                    <b>Price</b>
+                    <div class="filters" style="border-style: groove; padding: 15px;">
+                        <select name="sort_by" onchange="this.form.submit()">
+                            <option value="">Select</option>
+                            <option value="price_asc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
+                            <option value="price_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
+                            <option value="rating_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'rating_desc') echo 'selected'; ?>>Rating: High to Low</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+                <div class="col-10" style="padding-left: 100px;">
+
                     <h1>Perfume Collection</h1>
-                    <div class="row" style="justify-content: start;">
+                    <div class="line" style="margin-bottom:50px;"></div>
+                    <div class="row" style="justify-content: start; margin-left:-15px; margin-right:-15px;">
 
                         <?php
                         // Database connection settings
@@ -171,9 +190,21 @@ function displayrating($rating){
                             die("Connection failed: " . $conn->connect_error);
                         }
 
+                        // Set the number of products per page
+                        $products_per_page = 6;
+
+                        // Get the current page number from the URL, default to 1 if not set
+                        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+                        // Calculate the offset for the SQL query
+                        $offset = ($page - 1) * $products_per_page;
+
 
                         // Check if a gender filter has been set
                         $gender_filter = isset($_POST['gender']) ? $_POST['gender'] : '';
+                        $sort_by = isset($_POST['sort_by']) ? $_POST['sort_by'] : '';
+
+                        // Start building the base SQL query
                         $sql = "SELECT product_id, product_name, product_price, product_image, product_details, product_rating, gender FROM perfumes";
 
                         // Add the gender filter to the SQL query
@@ -181,22 +212,24 @@ function displayrating($rating){
                             $sql .= " WHERE gender = '$gender_filter'";
                         }
 
-                        // Apply Sort By Filter
-                        if (isset($_POST['sort_by']) && $_POST['sort_by']) {
-                            $sort_by = $_POST['sort_by'];
-                            switch ($sort_by) {
-                                case 'price_asc':
-                                    $sql .= " ORDER BY product_price ASC";
-                                    break;
-                                case 'price_desc':
-                                    $sql .= " ORDER BY product_price DESC";
-                                    break;
-                                case 'rating_desc':
-                                    $sql .= " ORDER BY product_rating DESC";
-                                    break;
-                            }
+                        // Apply sorting if set
+                        switch ($sort_by) {
+                            case 'price_asc':
+                                $sql .= " ORDER BY product_price ASC";
+                                break;
+                            case 'price_desc':
+                                $sql .= " ORDER BY product_price DESC";
+                                break;
+                            case 'rating_desc':
+                                $sql .= " ORDER BY product_rating DESC";
+                                break;
+                            default:
+                                $sql .= " ORDER BY product_name ASC"; // Default ordering
+                                break;
                         }
-
+                        
+                        // Add LIMIT and OFFSET for pagination
+                        $sql .= " LIMIT $products_per_page OFFSET $offset";
                         $result = $conn->query($sql);
 
                         if ($result->num_rows > 0) {
@@ -231,6 +264,24 @@ function displayrating($rating){
                             }
                         } else {
                             echo "<p>No products found.</p>";
+                        }
+                        echo "</div>";
+
+                        // Get the total number of products for pagination calculation
+                        $total_products_result = $conn->query("SELECT COUNT(*) AS total FROM perfumes" . ($gender_filter ? " WHERE gender = '$gender_filter'" : ""));
+                        $total_products_row = $total_products_result->fetch_assoc();
+                        $total_products = $total_products_row['total'];
+
+                        // Calculate total pages
+                        $total_pages = ceil($total_products / $products_per_page);
+
+                        // Display pagination links
+                        if ($total_pages > 1) {
+                            echo "<div class='row' style='justify-content:end; padding-top:15px;'><div class='pagination'>";
+                            for ($i = 1; $i <= $total_pages; $i++) {
+                                echo "<a href='product_page.php?page=$i'><button" . ($i == $page ? " class='active'" : "") . ">$i</button></a> ";
+                            }
+                            echo "</div></div>";
                         }
 
                         // Handle Add to Cart submission
@@ -270,7 +321,6 @@ function displayrating($rating){
 
                         $conn->close();
                         ?>
-                    </div>
                 </div>
             </div>
         </div>
