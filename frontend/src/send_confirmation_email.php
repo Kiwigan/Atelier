@@ -92,7 +92,7 @@ $message .= "</p>";
 
 // Send the email
 if (mail($email, $subject, $message, $headers)) {
-    echo "Order confirmation email sent successfully.";
+    //echo "Order confirmation email sent successfully.";
 } else {
     echo "Failed to send confirmation email.";
 }
@@ -134,7 +134,7 @@ $conn->close();
                         <p>Your order number is <span><?php echo htmlspecialchars($order_id); ?></span></p>
                         <div class="options" style="padding-top: 20px;">
                             <a href="home.html"><button class="btn primary-btn">Back to Home</button></a>
-                            <a href="orders.html"><button class="btn primary-btn">View Orders</button></a>
+                            <a href="orders.php"><button class="btn primary-btn">View Orders</button></a>
                         </div>
                     </div>
                 </div>

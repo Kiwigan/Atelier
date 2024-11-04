@@ -68,16 +68,24 @@ if (isset($_POST['add_to_cart'])) {
         $_SESSION['cart'] = [];
     }
 
-    // Add item to cart session
-    $_SESSION['cart'][] = [
-        'product_id' => $form_product_id,
-        'quantity' => $quantity,
-        'total_price' => $total_price,
-        'product_price' => $product['product_price'],
-        'product_name' => $product['product_name'], // Add product name if needed
-        'product_image' => $product['product_image'],
-        // You can add more product details as needed
-    ];
+    // Check if the product is already in the cart
+    if (isset($_SESSION['cart'][$form_product_id])) {
+        // If product exists, update quantity and total price
+        $_SESSION['cart'][$form_product_id]['quantity'] += $quantity;
+        $_SESSION['cart'][$form_product_id]['total_price'] += $total_price;
+    } else {
+    
+        // Add item to cart session
+        $_SESSION['cart'][$form_product_id] = [
+            'product_id' => $form_product_id,
+            'quantity' => $quantity,
+            'total_price' => $total_price,
+            'product_price' => $product['product_price'],
+            'product_name' => $product['product_name'], // Add product name if needed
+            'product_image' => $product['product_image'],
+            // You can add more product details as needed
+        ];
+    }
 
     // Success message with JavaScript alert, Returns to same page after a 0.2 second delay
     echo "<script>
@@ -106,9 +114,10 @@ $conn->close();
 
     <!--====== Lineicons CSS ======-->
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
-</head>
+    <title>Product Details</title>
 
-<script type="text/javascript">
+
+    <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
           const header = document.querySelector("header");
           let lastScrollTop = 0;
@@ -130,12 +139,13 @@ $conn->close();
             lastScrollTop = scrollTop;
           });
         });
-      </script>
+    </script>
+</head>
 
 <body>
     <!--HEADER SECTION-->
     <section>
-        <header>
+        <header class="header">
             <div class="container">
                 <nav class="navbar">
                     <div class="logo">
@@ -145,17 +155,26 @@ $conn->close();
                     </div>
                     <div class="nav-items">
                         <a href="home.html">Home</a>
-                        <a href="#">About</a>
-                        <a href="product_page.php">Products</a>
+                        <a href="product_page.php" class="active">Products</a>
+                        <a href="orders.php">Orders</a>
                         <a href="#">Contact Us</a>
                     </div>
                     <div class="icon-items">
-                        <a href="#"><img src="./assets/icons/search.png" height="27"></a>
-                        <a href="#"><img src="./assets/icons/profile.png" height="30"></a>
-                        <a href="cart.php"><img src="./assets/icons/cart.png" height="30"></a>
+                        <a href="#"><i class="bi bi-search"></i></a>
+                        <div class="profile-dropdown">
+                            <a href="#"><i class="bi bi-person-circle"></i></a>
+                            <div class="dropdown-content">
+                                <a href="profile.html">Profile</a>
+                                <a href="settings.html">Settings</a>
+                                <a href="login.php">Login</a>
+                                <a href="logout.php">Logout</a>
+                            </div>
+                        </div>
+                        <a href="cart.php"><i class="bi bi-bag" ></i></a>
 
                     </div>
                 </nav>
+
             </div>
         </header>
     </section>

@@ -256,8 +256,6 @@ ul li label{
   transition: opacity 0.5s; /* Fade effect */
 }
 
-<<<<<<< Updated upstream
-=======
 .bi-search, .bi-person-circle, .bi-bag {
   font-size: 24px;
   color: #212427;
@@ -312,7 +310,7 @@ ul li label{
 .profile-dropdown .dropdown-content {
   transition-delay: 0.2s;
 }
->>>>>>> Stashed changes
+
 
 /*---------ROWS-------------*/
   .row{
@@ -631,18 +629,16 @@ table{
   font-size: 17px;
 }
 
-.remove-cross{
+.remove-btn{
+  all: unset;
   color: var(--base);
   transition: all 0.3s ease-out 0s;
 }
 
 
-<<<<<<< Updated upstream
-.remove-cross:hover{
-=======
 .remove-btn:hover{
->>>>>>> Stashed changes
   color: var(--primary);
+  cursor: pointer;
 }
 
 .input-wrapper{

@@ -33,7 +33,7 @@ function displayrating($rating){
     <!--====== Lineicons CSS ======-->
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
 
-    <title>My Home Page</title>
+    <title>Products</title>
 
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
@@ -63,7 +63,7 @@ function displayrating($rating){
 <body>
     <!--HEADER SECTION-->
     <section>
-        <header>
+        <header class="header">
             <div class="container">
                 <nav class="navbar">
                     <div class="logo">
@@ -74,16 +74,31 @@ function displayrating($rating){
                     <div class="nav-items">
                         <a href="home.html">Home</a>
                         <a href="product_page.php" class="active">Products</a>
-                        <a href="orders.html">Orders</a>
+                        <a href="orders.php">Orders</a>
                         <a href="#">Contact Us</a>
                     </div>
                     <div class="icon-items">
-                        <a href="#"><img src="./assets/icons/search.png" height="27"></a>
-                        <a href="#"><img src="./assets/icons/profile.png" height="30"></a>
-                        <a href="cart.php"><img src="./assets/icons/cart.png" height="30"></a>
+                        <!--
+                        <form action="search_results.php" method="GET">
+                        <input type="text" name="search_term" placeholder="Search products..." required>
+                        <button type="submit">Search</button>
+                        </form> -->
+                        
+                        <a href="#"><i class="bi bi-search"></i></a>
+                        <div class="profile-dropdown">
+                            <a href="#"><i class="bi bi-person-circle"></i></a>
+                            <div class="dropdown-content">
+                                <a href="profile.html">Profile</a>
+                                <a href="settings.html">Settings</a>
+                                <a href="login.php">Login</a>
+                                <a href="logout.php">Logout</a>
+                            </div>
+                        </div>
+                        <a href="cart.php"><i class="bi bi-bag" ></i></a>
 
                     </div>
                 </nav>
+
             </div>
         </header>
     </section>
@@ -92,9 +107,9 @@ function displayrating($rating){
         <div class="container" style="padding-top: 100px;">
             <div class="row" style="align-items: flex-start;">
                 <div class="col-2">
-                    <form method="POST" action="">
-                        <b>Gender</b>
-                        <div class="filters">
+                    <div class="filters" style="border-style: groove; padding-left: 15px; padding-right: 15px;">
+                        <form method="POST" action="">
+                            <b>Gender</b>
                             <ul>
                                 <li>
                                     <input type="radio" id="Men" name="gender" value="Men" 
@@ -115,19 +130,25 @@ function displayrating($rating){
                                     <label for="Unisex">Unisex</label>
                                 </li>
                             </ul>
-                        </div>
-                    </form>
+
+
+                            <b>Price</b>
+                            <select name="sort_by" onchange="this.form.submit()">
+                                <option value="">Select</option>
+                                <option value="price_asc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
+                                <option value="price_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
+                                <option value="rating_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'rating_desc') echo 'selected'; ?>>Rating: High to Low</option>
+                            </select>
+
+                        </form>
+                    </div>
+=======
                 </div>
                 <div class="col-10">
                     <h1>Perfume Collection</h1>
                     <div class="row" style="justify-content: start;">
 
                         <?php
-<<<<<<< Updated upstream
-                        session_start(); // Start the session
-=======
-                        //session_start(); // Start the session
->>>>>>> Stashed changes
 
                         // Database connection settings
                         $servername = "localhost";
@@ -151,6 +172,22 @@ function displayrating($rating){
                         // Add the gender filter to the SQL query
                         if ($gender_filter) {
                             $sql .= " WHERE gender = '$gender_filter'";
+                        }
+
+                        // Apply Sort By Filter
+                        if (isset($_POST['sort_by']) && $_POST['sort_by']) {
+                            $sort_by = $_POST['sort_by'];
+                            switch ($sort_by) {
+                                case 'price_asc':
+                                    $sql .= " ORDER BY product_price ASC";
+                                    break;
+                                case 'price_desc':
+                                    $sql .= " ORDER BY product_price DESC";
+                                    break;
+                                case 'rating_desc':
+                                    $sql .= " ORDER BY product_rating DESC";
+                                    break;
+                            }
                         }
 
                         $result = $conn->query($sql);

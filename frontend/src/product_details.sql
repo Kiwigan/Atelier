@@ -21,6 +21,7 @@ CREATE TABLE cart (
 
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
     email VARCHAR(100),
@@ -29,7 +30,9 @@ CREATE TABLE orders (
     city VARCHAR(100),
     postal_code VARCHAR(20),
     order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    total_price DECIMAL(10, 2) -- Column to store the final total price
+    total_price DECIMAL(10, 2), -- Column to store the final total price
+    status ENUM('Order Placed', 'Shipped', 'Delivered', 'Cancelled') DEFAULT 'Order Placed',
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE order_items (

@@ -8,7 +8,7 @@ $password = "";
 $dbname = "atelier";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname, '3325');
+$conn = new mysqli($servername, $username, $password, $dbname, '3306');
 
 
 // Check connection
@@ -16,55 +16,42 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Inititate Subtotal
-$subtotal = 0;
-$shipping = 10.00; // Flat rate shipping, or you could calculate based on cart content
+$user_id = $_SESSION['user_id']; // Assuming user_id is stored in session
 
+// Prepare SQL statement
+$sql = "SELECT 
+            o.order_id,
+            o.order_date,
+            o.total_price AS order_total_price,
+            o.status,
+            oi.quantity,
+            oi.total_price AS item_total_price,
+            p.product_name,
+            p.product_price,
+            p.product_image
+        FROM 
+            orders o
+        JOIN 
+            order_items oi ON o.order_id = oi.order_id
+        JOIN 
+            perfumes p ON oi.product_id = p.product_id
+        WHERE 
+            o.user_id = ?
+        ORDER BY 
+            o.order_date DESC";
 
-// Check if remove_product_id is set in the request
-if (isset($_POST['remove_product_id'])) {
-    $remove_product_id = intval($_POST['remove_product_id']);
-    $found = false; // To check if the item was found
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    // Loop through the cart to find and remove the product
-    if (isset($_SESSION['cart'])) {
-        foreach ($_SESSION['cart'] as $key => $product) {
-            if ($product['product_id'] == $remove_product_id) {
-                unset($_SESSION['cart'][$key]); // Remove the product
-                echo "Item with product ID $remove_product_id removed.";
-                $found = true;
-                break; // Exit loop after removing the item
-            }
-        }
-    }
-
-    if (!$found) {
-        echo "Item with product ID $remove_product_id not found in session.";
-    }
-
-    // Redirect to avoid form resubmission issues
-    header("Location: cart.php");
-    exit();
+// Create an array to hold orders grouped by order_id
+$orders = [];
+while ($row = $result->fetch_assoc()) {
+    $orders[$row['order_id']][] = $row; // Grouping items by order_id
 }
 
-// Update cart quantity if form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
-    $cart_id = $_POST['cart_id'];
-    $new_quantity = $_POST['quantity'];
-
-    // Update the quantity in the session cart
-    if (isset($_SESSION['cart'][$cart_id])) {
-        $_SESSION['cart'][$cart_id]['quantity'] = $new_quantity;
-        $_SESSION['cart'][$cart_id]['total_price'] = $_SESSION['cart'][$cart_id]['product_price'] * $new_quantity;
-    }
-
-    // Refresh the page to show updated cart
-    header("Location: cart.php");
-    exit();
-}
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -80,11 +67,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
 
     <!--====== Lineicons CSS ======-->
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
-    <title>Cart</title>
+    <title>Orders</title>
 
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+          const header = document.querySelector("header");
+          let lastScrollTop = 0;
+    
+          window.addEventListener("scroll", function() {
+            let scrollTop = window.scrollY;
+    
+            if (scrollTop > 0) {
+              header.classList.add("sticky");
+              if (scrollTop >= lastScrollTop) {
+                header.classList.add("hidden"); // Scroll down - hide
+              } else {
+                header.classList.remove("hidden"); // Scroll up - show
+              }
+            } else {
+              header.classList.remove("sticky", "hidden"); // Reset at top
+            }
+            
+            lastScrollTop = scrollTop;
+          });
+        });
+      </script>
 </head>
 <body>
-<section>
+    <section>
         <header class="header">
             <div class="container">
                 <nav class="navbar">
@@ -94,9 +104,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
                     </a>
                     </div>
                     <div class="nav-items">
-                        <a href="home.html" class="active">Home</a>
+                        <a href="home.html">Home</a>
                         <a href="product_page.php">Products</a>
-                        <a href="orders.php">Orders</a>
+                        <a href="orders.php" class="active">Orders</a>
                         <a href="#">Contact Us</a>
                     </div>
                     <div class="icon-items">
@@ -120,96 +130,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
     </section>
 
     <section>
-        <div class="container" style="padding-top: 50px;">
-            <div class="row">
-                <div class="col-7">
-                    <h2>Your Cart</h2>
-                    <h5>Not ready to checkout? <a href="home.html">Continue Shopping</a></h5>
-
-
-                    <table style="width: 100%; margin-top: 30px; margin-bottom: 30px;">
+        <div class="container" style="padding-top: 50px; padding-bottom: 50px;">
+            <h2 class="title_heading-2" style="padding:bottom: 20px;">Your Orders &nbsp;&boxh;&boxh;&boxh;&boxh;&boxh;&boxh;</h2>
+            <?php if (empty($orders)): ?>
+                <p>You have not made any orders yet.</p>
+            <?php else: ?>
+                <?php foreach ($orders as $order_id => $items): ?>
+                    <h3 style="padding-top: 35px;">Order ID: <?php echo htmlspecialchars($order_id); ?></h3>
+                    <table style="width: 100%; margin-top: 5px; margin-bottom: 30px;">
                         <tr>
-                            <th style="width: 15%;">Product</th>
-                            <th style="width: 35%;"></th>
-                            <th style="width: 20%;">Quantity</th>
-                            <th style="width: 20%;">Subtotal</th>
-                            <th style="width: 10%;">Remove</th>
+                            <th style="width: 10%;">Product</th>
+                            <th style="width: 25%;"></th>
+                            <th style="width: 15%;">Total</th>
+                            <th style="width: 20%;">Status</th>
+                            <th style="width: 15%;">Order Date</th>
+                            <th style="width: 15%;"></th>
                         </tr>
+                        <!--Cart Item-->
 
-                        <?php
-                        // Check if the session cart is set and not empty
-                        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])):
-                            foreach ($_SESSION['cart'] as $cart_id => $item):
-                                $subtotal += $item['total_price'];?>
-                        
-                        
+                        <?php foreach ($items as $item): ?>
                             <tr>
-                                <td style="width: 20px;">
-                                    <img src="<?php echo $item['product_image']; ?>" alt="<?php echo $item['product_name']; ?>" class="product-image">
+                                <td>
+                                    <img src="<?php echo htmlspecialchars($item['product_image']); ?>" alt="Product Image">
                                 </td>
                                 <td>
-                                    <h5 class="cart-title"><?php echo $item['product_name']; ?></h5>
-                                    <h5 class="cart-price">$<?php echo number_format($item['product_price'], 2); ?></h5>
-                                </td>
-                                <td>
+                                    <h4><?php echo htmlspecialchars($item['product_name']); ?></h4>
                                     <div class="row">
-                                        <form method="POST" action="cart.php">
-                                            <input type="hidden" name="cart_id" value="<?php echo $cart_id; ?>">
-                                            <input type="number" name="quantity" class="quantityfield" style="width: 50px; height: 30px; padding-right: 0px;" 
-                                                   value="<?php echo $item['quantity']; ?>" min="1" step="1"
-                                                   onchange="this.value = Math.max(1, this.value); this.form.submit()">
-                                        </form>
+                                    <h4><span class="price">$<?php echo number_format($item['product_price'], 2); ?></span>&nbsp;&nbsp;Quantity: <span class="quantity"><?php echo htmlspecialchars($item['quantity']); ?></span></h4>
                                     </div>
                                 </td>
-                                <td style="width: 20%;">
-                                    <h5 class="cart-subtotal">$<?php echo number_format($item['total_price'], 2); ?></h5>
+                                <td>
+                                    <h4><span class="total-price">$<?php echo number_format($item['item_total_price'], 2); ?></span></h4>
                                 </td>
-
-                                <td style= "text-align: center;">
-                                    <form method="POST" action="cart.php">
-                                    <input type="hidden" name="remove_product_id" value="<?php echo $item['product_id']; ?>">
-                                    <button type="submit" class="remove-btn"><i class="bi bi-x-lg"></i></button>
-                                    </form>
+                                <td>
+                                    <div class="row" style="justify-content: start;">
+                                        <i class="bi bi-dot"></i>
+                                        <span><?php echo htmlspecialchars($item['status']); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p><span class="order-time"><?php echo date("d-M-Y", strtotime($item['order_date'])); ?></span></p>
+                                </td>
+                                
+                                <td style="text-align: end;">
+                                    <button class="btn primary-btn">Track Order</button>
                                 </td>
                             </tr>
-
-                            <?php endforeach;
-                        else: ?>
-                            <tr>
-                                <td colspan="5" style="text-align: center;">Your cart is empty.</td>
-                            </tr>
-                        <?php endif; ?>
+                            <!--Cart Item End-->
+                        <?php endforeach; ?>                         
                     </table>
-                </div>
-                <div class="col-5" style="padding-left: 100px;">
-                    <h2 style="padding-bottom: 10px;">Order Summary</h2>
-                    <input type="text" placeholder="Enter coupon code here" style="width: 100%; padding: 5px; margin-bottom: 10px;">
-                    <div class="row" style="justify-content: space-between; padding-top: 5px;">
-                        <h5>Subtotal</h5>
-                        <h5>$<?php echo number_format($subtotal, 2); ?></h5>
-                    </div>
-                    <div class="row" style="justify-content: space-between; padding-top: 5px; padding-bottom: 5px;">
-                        <h5>Shipping</h5>
-                        <h5>$<?php echo number_format($shipping, 2); ?></h5>
-                    </div>
-                    <hr>
-                    <div class="row" style="justify-content: space-between; padding-top: 5px;">
-                        <h5>Total</h5>
-                        <h5>$<?php echo number_format($subtotal + $shipping, 2); ?></h5>
-                    </div>
-                    <?php if (!empty($_SESSION['cart'])): ?>
-                        <form method="POST" action="payment.php">
-                            <button class="primary-btn addtocart-btn" style="margin-top: 10px;">Continue to checkout</button>
-                        </form>
-                    <?php else: ?>
-                        <button class="primary-btn addtocart-btn" style="margin-top: 10px;" disabled>Continue to Checkout</button>
-                    <?php endif; ?>
-                </div>
-            </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </section>
+</body>
 
-    <section>
+<section>
         <footer class="footer-area footer-one">
             <div class="footer-widget">
             <div class="container">
@@ -323,9 +299,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
         </footer>
         <!--====== FOOTER ONE PART ENDS ======-->
     </section>
-
-</body>
 </html>
 
-
-<?php $conn->close(); ?>
+<?php
+// Close connection
+$stmt->close();
+$conn->close();
+?>
