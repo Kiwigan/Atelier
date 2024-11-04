@@ -79,6 +79,12 @@ function displayrating($rating){
                         <a href="#">Contact Us</a>
                     </div>
                     <div class="icon-items">
+                        <!--
+                        <form action="search_results.php" method="GET">
+                        <input type="text" name="search_term" placeholder="Search products..." required>
+                        <button type="submit">Search</button>
+                        </form> -->
+                        
                         <a href="#"><i class="bi bi-search"></i></a>
                         <div class="profile-dropdown">
                             <a href="#"><i class="bi bi-person-circle"></i></a>
@@ -102,9 +108,9 @@ function displayrating($rating){
         <div class="container" style="padding-top: 100px;">
             <div class="row" style="align-items: flex-start;">
                 <div class="col-2">
-                    <b>Filters:</b>
                     <div class="filters" style="border-style: groove; padding-left: 15px; padding-right: 15px;">
                         <form method="POST" action="">
+                            <b>Filters:</b>
                             <ul>
                                 <li>
                                     <input type="radio" id="Men" name="gender" value="Men" 
@@ -125,6 +131,15 @@ function displayrating($rating){
                                     <label for="Unisex">Unisex</label>
                                 </li>
                             </ul>
+
+                            <b>Sort By:</b>
+                            <select name="sort_by" onchange="this.form.submit()">
+                                <option value="">Select</option>
+                                <option value="price_asc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
+                                <option value="price_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
+                                <option value="rating_desc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'rating_desc') echo 'selected'; ?>>Rating: High to Low</option>
+                            </select>
+
                         </form>
                     </div>
                 </div>
@@ -155,6 +170,22 @@ function displayrating($rating){
                         // Add the gender filter to the SQL query
                         if ($gender_filter) {
                             $sql .= " WHERE gender = '$gender_filter'";
+                        }
+
+                        // Apply Sort By Filter
+                        if (isset($_POST['sort_by']) && $_POST['sort_by']) {
+                            $sort_by = $_POST['sort_by'];
+                            switch ($sort_by) {
+                                case 'price_asc':
+                                    $sql .= " ORDER BY product_price ASC";
+                                    break;
+                                case 'price_desc':
+                                    $sql .= " ORDER BY product_price DESC";
+                                    break;
+                                case 'rating_desc':
+                                    $sql .= " ORDER BY product_rating DESC";
+                                    break;
+                            }
                         }
 
                         $result = $conn->query($sql);

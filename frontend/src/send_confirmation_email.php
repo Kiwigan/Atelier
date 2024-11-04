@@ -92,7 +92,7 @@ $message .= "</p>";
 
 // Send the email
 if (mail($email, $subject, $message, $headers)) {
-    echo "Order confirmation email sent successfully.";
+    //echo "Order confirmation email sent successfully.";
 } else {
     echo "Failed to send confirmation email.";
 }
