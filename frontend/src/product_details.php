@@ -240,8 +240,8 @@ $conn->close();
                             </a>
                         </div>
                         <p class="text">
-                                Maximizing Profits, Ensuring Compliance — <br>
-                                Your Trusted Partner in Accounting and Advisory
+                            The Atelier, a place for creative dialogues — <br>
+                            Where heritage meets modernity
                         </p>
                         </div>
                         <div class="footer-app-store">
@@ -286,11 +286,10 @@ $conn->close();
                         <h6 class=" footer-title">Help & Support</h6>
                         <ul>
                             <li>
-                                <i class="lni lni-map-marker"></i> Madison Street, NewYork,
-                                USA
+                                <i class="lni lni-map-marker"></i> 107 Corporation Walk, 618482
                             </li>
-                            <li><i class="lni lni-phone-set"></i> +88 556 88545</li>
-                            <li><i class="lni lni-envelope"></i> support@ayroui.com</li>
+                            <li><i class="lni lni-phone-set"></i> +65 9866 1950</li>
+                            <li><i class="lni lni-envelope"></i> Atelier@Noire.com</li>
                         </ul>
                         </div>
                         <!-- End Footer Contact -->
@@ -301,20 +300,13 @@ $conn->close();
             <!-- container -->
             </div>
             <!-- footer widget -->
-            <div class="footer-copyright bg-dark">
+            <div class="footer-copyright">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div
-                        class="
-                        copyright
-                        text-center
-                        d-md-flex
-                        justify-content-between
-                        align-items-center
-                        "
-                        >
+                <div class="row" style="justify-content: space-between; align-items: center;">
+                    <div class="col-8">
                         <p class="text text-white">Copyright © 2024 <i>Keegan.</i> All Rights Reserved</p>
+                    </div>
+                    <div class="col-4" style="text-align: right;">
                         <ul class="social">
                             <li>
                                 <a href="javascript:void(0)">
@@ -337,7 +329,7 @@ $conn->close();
                                     ></a>
                             </li>
                         </ul>
-                        </div>
+                    </div>
                         <!-- copyright -->
                     </div>
                 </div>
