@@ -8,7 +8,7 @@ $password = "";
 $dbname = "atelier";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname, '3306');
+$conn = new mysqli($servername, $username, $password, $dbname, '3325');
 
 
 // Check connection
@@ -164,6 +164,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
                                 <td style="width: 20%;">
                                     <h5 class="cart-subtotal">$<?php echo number_format($item['total_price'], 2); ?></h5>
                                 </td>
+
                                 <td style= "text-align: center;">
                                     <form method="POST" action="cart.php">
                                     <input type="hidden" name="remove_product_id" value="<?php echo $item['product_id']; ?>">

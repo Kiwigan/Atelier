@@ -25,7 +25,6 @@ function displayrating($rating){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="product_page.css">
     <link rel="icon" href="assets/logos/logo-light.png" type="image/png">
     
     <!--====== BootStrap Icons (NOTE: THIS IS NOT BOOTSTRAP FRAMEWORK, JUST ITS ICONS)======-->
@@ -110,7 +109,7 @@ function displayrating($rating){
                 <div class="col-2">
                     <div class="filters" style="border-style: groove; padding-left: 15px; padding-right: 15px;">
                         <form method="POST" action="">
-                            <b>Filters:</b>
+                            <b>Gender</b>
                             <ul>
                                 <li>
                                     <input type="radio" id="Men" name="gender" value="Men" 
@@ -132,7 +131,8 @@ function displayrating($rating){
                                 </li>
                             </ul>
 
-                            <b>Sort By:</b>
+
+                            <b>Price</b>
                             <select name="sort_by" onchange="this.form.submit()">
                                 <option value="">Select</option>
                                 <option value="price_asc" <?php if (isset($_POST['sort_by']) && $_POST['sort_by'] == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
@@ -142,12 +142,14 @@ function displayrating($rating){
 
                         </form>
                     </div>
+=======
                 </div>
                 <div class="col-10">
                     <h1>Perfume Collection</h1>
                     <div class="row" style="justify-content: start;">
 
                         <?php
+
                         // Database connection settings
                         $servername = "localhost";
                         $username = "root";
@@ -155,7 +157,7 @@ function displayrating($rating){
                         $dbname = "atelier";
                         
                         // Create connection
-                        $conn = new mysqli($servername, $username, $password, $dbname, '3306');
+                        $conn = new mysqli($servername, $username, $password, $dbname, '3325');
                         
                         // Check connection
                         if ($conn->connect_error) {
@@ -193,20 +195,25 @@ function displayrating($rating){
                         if ($result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
                                 // Wrap each product card in an <a> tag
+                                
                                 echo "<div class='col-4'>";
+                                echo "<form method='POST' action=''>";
                                 echo "<a href='product_details.php?product_id=" . $row['product_id'] . "' style='text-decoration: none; color: inherit;'>";
 
                                 echo "<div class='card'>";
+                                echo "<div class='product-image-container'>";
                                 echo "<img src='" . $row['product_image'] . "' alt='" . $row['product_name'] . "' class='product-image'>";
-                                echo "<form method='POST' action=''>";
+                                echo "<div class='add-to-cart-overlay'>";
+                                echo  "<button type='submit' name='add_to_cart' class='add-to-cart-btn'>Add to Cart</button>";
+                                echo  "</div></div>";
                                 echo "<div class='card-body'>";
                                 echo "<h2 class='card-title'>" . $row['product_name'] . "</h2>";
                                 displayrating(number_format($row['product_rating'], 1));
                                 echo "<p class='card-price'>$" . number_format($row['product_price'], 2) . "</p>";
-                                /*echo "<button type='submit' name='add_to_cart' class='add-to-cart-btn'>Add to Cart</button>";*/
+                                echo "</div>";
+                                
                                 echo "</div>";
                                 echo "</form>";
-                                echo "</div>";
                                 echo "</div>";
                             }
                         } else {
