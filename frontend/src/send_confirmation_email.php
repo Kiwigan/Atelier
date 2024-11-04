@@ -10,7 +10,7 @@ $dbname = "atelier";
 
 // Create connection
 
-$conn = new mysqli($servername, $username, $password, $dbname, '3306');
+$conn = new mysqli($servername, $username, $password, $dbname, '3325');
 
 // Check connection
 if ($conn->connect_error) {

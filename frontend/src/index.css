@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 *{
   margin: 0;
   padding: 0;
@@ -60,6 +62,12 @@
   background-image: url(./assets/images/hero_banner_5.jpg);
 }
 
+.hero-tag{
+  font-family: "Playfair Display", serif;
+  font-size: 36px;
+  padding-bottom: 10px;
+}
+
 .container {
   position: relative;
   margin: 0 auto;
@@ -80,11 +88,13 @@
   letter-spacing: 0.08em;
   border: 1px solid transparent;
   text-transform: uppercase;
+  transition: 0.3s ease;
 }
 .active.primary-btn, .primary-btn:hover, .primary-btn:focus {
   background: var(--primary-dark);
   color: var(--white);
   box-shadow: var(--shadow-4);
+  transition: 0.3s ease;
 }
 
 
@@ -172,6 +182,9 @@ header.hidden {
 
 .nav-items a {
   position: relative;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 600;
   text-align: center;
   text-decoration: none;
   color: #212427;
@@ -243,6 +256,63 @@ ul li label{
   transition: opacity 0.5s; /* Fade effect */
 }
 
+<<<<<<< Updated upstream
+=======
+.bi-search, .bi-person-circle, .bi-bag {
+  font-size: 24px;
+  color: #212427;
+  transition: 0.3s ease;
+}
+.bi-search:hover, .bi-person-circle:hover, .bi-bag:hover {
+  color: var(--primary-dark);
+}
+
+/* Position the dropdown content below the profile icon */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 67px; /* Adjust as needed to position below the icon */
+  left: 50%; /* Center horizontally relative to the parent */
+  transform: translateX(-50%); /* Offset to center */
+  background-color: var(--light-3);
+  min-width: 150px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 2px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Styling for dropdown links */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+/* Show dropdown content on hover */
+.profile-dropdown:hover .dropdown-content {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* Delay hiding */
+.profile-dropdown .dropdown-content {
+  transition-delay: 0.2s;
+}
+>>>>>>> Stashed changes
 
 /*---------ROWS-------------*/
   .row{
@@ -324,10 +394,67 @@ input:focus{
 }
 
 
+/*==========ABOOUT US===============*/
+
+.about-us {
+  margin-top: 70px; /* Adjust the value as needed */
+  margin-bottom: 130px; /* Adjust the value as needed */
+}
+
+.tagline {
+color: var(--primary-dark);
+font-family: "Playfair Display", serif;
+font-size: 170%;
+margin-bottom: 8%;
+}
+
+.about-desc {
+font-size: 110%;
+}
+
+.about-row{
+margin-top: 3%;
+}
+
+.about-title {
+font-family: var(--primary-font);
+}
+
+.line {
+display: inline-block; /* Make it inline to appear next to the text */
+color: var(--primary);
+width: 8%; /* Adjust this value for desired length */
+height: 2px; /* Thickness of the line */
+background-color: var(--black); /* Color of the line */
+vertical-align: middle; /* Aligns the line vertically with the text */
+}
+
+.image-container {
+position: relative;
+display: flex;
+width: 700px; /* Adjust width as needed */
+height: 500px; /* Adjust height as needed */
+}
+
+.rectangle {
+position: absolute;
+top: 6.5%; /* Adjust as needed to align with the image */
+left: -4.5%; /* Adjust as needed to align with the image */
+width: 90%; /* Rectangle width */
+height: 100%; /* Rectangle height */
+background-color: #D1BDA3; /* Rectangle color */
+z-index: 0; /* Behind the image */
+}
+
+.image-on-rectangle {
+position: relative;
+width: 90%; /* Adjust image size as needed */
+z-index: 1; /* On top of the rectangle */
+}
 
 /*===== STATS =====*/
 .statsbar{
-  background-color: #f7f7f7;
+  background-color: var(--light-1);
 }
 
 /*===== BEST SELLERS =====*/
@@ -367,6 +494,10 @@ input:focus{
   padding-bottom: 10px;
 }
 
+
+
+
+
 .card-body{
   text-align: center;
 }
@@ -388,11 +519,77 @@ input:focus{
 
 .card{
   padding-bottom: 30px;
+  transition: 0.3s ease;
+}
+
+.card:hover{
+  transform: translateY(-6px);
+  transition: 0.3s ease;
 }
 
 .ratings i {
   color: var(--primary);
 }
+.filters{
+  border-style: groove;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.product-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.product-image {
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.add-to-cart-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding-bottom: 30px; /* Add some padding from the bottom if needed */
+}
+
+.add-to-cart-btn {
+  padding: 15px 15px;
+  background-color: var(--white);
+  color: #212427;
+  border: 1px solid rgb(228, 228, 228);
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 2px;
+  opacity: 0.9;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #9dbcc4;
+  color:var(--white);
+  transition: 0.5 ease;
+}
+
+
+.product-image-container:hover .add-to-cart-overlay {
+  opacity: 1;
+}
+
+.product-image-container:hover .product-image {
+  transform: scale(1.05);
+}
+
 
 
 /*===== Product Details =====*/
@@ -440,7 +637,11 @@ table{
 }
 
 
+<<<<<<< Updated upstream
 .remove-cross:hover{
+=======
+.remove-btn:hover{
+>>>>>>> Stashed changes
   color: var(--primary);
 }
 
