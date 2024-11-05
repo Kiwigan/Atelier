@@ -85,7 +85,6 @@ if (isset($_POST['add_to_cart'])) {
             'product_price' => $product['product_price'],
             'product_name' => $product['product_name'], // Add product name if needed
             'product_image' => $product['product_image'],
-            // You can add more product details as needed
         ];
     }
 
@@ -185,9 +184,9 @@ $conn->close();
     </section>
 
     <section>
-        <div class="container">
+        <div class="container" style="padding-bottom:50px; padding-top:50px;">
             <div class="row">
-                <div class="col-7" style="padding-right: 80px; display: flex; justify-content: center;">
+                <div class="col-7" style="padding-right: 80px; padding-bottom:30px; padding-top:30px; display: flex; justify-content: center;">
                     <img src="<?php echo $product['product_image']; ?>" alt="<?php echo $product['product_name']; ?>" class="product-detail-image">
                 </div>
                 <div class="col-5">

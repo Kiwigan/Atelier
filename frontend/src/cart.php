@@ -125,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_id'])) {
     </section>
 
     <section>
-        <div class="container" style="padding-top: 50px;">
+        <div class="container" style="padding-top: 50px; padding-bottom:50px;">
             <div class="row">
                 <div class="col-7">
                     <h2>Your Cart</h2>

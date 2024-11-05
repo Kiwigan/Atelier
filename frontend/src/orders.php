@@ -136,9 +136,10 @@ while ($row = $result->fetch_assoc()) {
 
     <section>
         <div class="container" style="padding-top: 50px; padding-bottom: 50px;">
-            <h2 class="title_heading-2" style="padding:bottom: 20px;">Your Orders &nbsp;&boxh;&boxh;&boxh;&boxh;&boxh;&boxh;</h2>
+            <h2 class="title_heading-2" style="padding:bottom: 20px;">Your Orders</h2>
+            <div class="line"></div>
             <?php if (empty($orders)): ?>
-                <p>You have not made any orders yet.</p>
+                <p style="padding-bottom:190px;">You have not made any orders yet.</p>
             <?php else: ?>
                 <?php foreach ($orders as $order_id => $items): ?>
                     <h3 style="padding-top: 35px;">Order ID: <?php echo htmlspecialchars($order_id); ?></h3>

@@ -483,6 +483,14 @@ z-index: 1; /* On top of the rectangle */
 
 /*===== BEST SELLERS =====*/
 
+.showmore{
+  color: var(--primary);
+}
+
+.showmore:hover{
+  color: var(--primary-dark);
+}
+
 .title_heading {
   /*font-family: Jost;*/
   font-size: 24px;

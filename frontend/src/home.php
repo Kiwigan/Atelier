@@ -2,8 +2,26 @@
 session_start(); // Start the session
 // Check if the user is logged in by checking if a session variable is set
 $is_logged_in = isset($_SESSION['user_id']);
-?>
 
+
+function displayrating($rating){
+    echo "<div class='ratings'>";
+    for($i = $rating; $i >= 1; $i--){
+        echo "<i class='bi bi-star-fill'></i>&nbsp";
+    }
+    if(($rating*10)%10 != 0){
+        echo "<i class='bi bi-star-half'></i>&nbsp";
+    }
+    $remainder = 5 - floor($rating);
+    if($remainder > 0){
+        for($i = $remainder; $i>0; $i--){
+            echo "<i class='bi bi-star'></i>&nbsp";
+        }
+    }
+    echo "</div>";
+
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -93,7 +111,7 @@ $is_logged_in = isset($_SESSION['user_id']);
                     <img src="assets/images/hero2.png" style="padding-top: 80px;">
                 </div>
                 <div class="col-6">
-                    <h1 class="hero-tag">Welcome, Keegan</h1>
+                    <h1 class="hero-tag">Where heritage meets modernity</h1>
                     <p style="padding-top: 10px;">
                         Atelier Noire affixes to each of its creations a luminous Cologne signature, 
                         crafted from the noblest raw materials. By artfully combining the clarity and elegance 
@@ -217,109 +235,112 @@ $is_logged_in = isset($_SESSION['user_id']);
                     <h2 class="title_heading">Our Best Sellers</h2>
                 </div>
                 <div class="col-12" style="display:flex; align-items: center; justify-content: center; padding-top: 20px; gap: 5px;">
-                    <a href="productpage.html">
+                    <a href="product_page.php">
                         <button class="secondary-btn">New Arrivals</button>
                     </a>
-                    <a href="productpage.html">
+                    <a href="product_page.php">
                         <button class="secondary-btn">Best Sellers</button>
                     </a>
-                    <a href="productpage.html">
+                    <a href="product_page.php">
                         <button class="secondary-btn">Top Rated</button>
                     </a>
                 </div>
             </div>
             
             <div class="row" style="padding-top: 50px;">
-                <!--Card Start-->
-                <div class="col-3">
-                    <div class="card">
-                        <img src="assets/images/product1.jpg" alt="image1">
-                        <div class="card-body">
-                            <h3 class="card-title">Floral Essence</h3>
-                            <div class="ratings">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>   
-                            </div>
-                            <p class="card-price">$49.99</p>
-                        </div>
-                    </div>
-                </div>
-                <!--Card End-->
-                <!--Card Start-->
-                <div class="col-3">
-                    <div class="card">
-                        <img src="assets/images/product2.jpg" alt="image2">
-                        <div class="card-body">
-                            <h3 class="card-title">Ocean Breeze</h3>
-                            <div class="ratings">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>   
-                            </div>
-                            <p class="card-price">$59.50</p>
-                        </div>
-                    </div>
-                </div>
-                <!--Card End-->
-                <!--Card Start-->
-                <div class="col-3">
-                    <div class="card">
-                        <img src="assets/images/product3.jpg" alt="image3">
-                        <div class="card-body">
-                            <h3 class="card-title">Amber Nights</h3>
-                            <div class="ratings">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>   
-                            </div>
-                            <p class="card-price">$75.00</p>
-                        </div>
-                    </div>
-                </div>
-                <!--Card End-->
-                <!--Card Start-->
-                <div class="col-3">
-                    <div class="card">
-                        <img src="assets/images/product4.jpg" alt="image4">
-                        <div class="card-body">
-                            <h3 class="card-title">Citrus Burst</h3>
-                            <div class="ratings">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>   
-                            </div>
-                            <p class="card-price">$39.99</p>
-                        </div>
-                    </div>
-                </div>
-                <!--Card End-->
-                <!--Card Start-->
-                <div class="col-3">
-                    <div class="card">
-                        <img src="assets/images/product5.jpg" alt="image1">
-                        <div class="card-body">
-                            <h3 class="card-title">Mystic Oud</h3>
-                            <div class="ratings">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>   
-                            </div>
-                            <p class="card-price">$89.99</p>
-                        </div>
-                    </div>
-                </div>
-                <!--Card End-->            
+                <?php
+                // Database connection settings
+                $servername = "localhost";
+                $username = "root";
+                $password = "";
+                $dbname = "atelier";
+
+                // Create connection
+                $conn = new mysqli($servername, $username, $password, $dbname, '3306');
+
+                // Check connection
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+
+                // Set the limit of products shown to 8
+                $sql = "SELECT product_id, product_name, product_price, product_image, product_details, product_rating FROM perfumes LIMIT 8";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                        // Wrap each product card in an <a> tag
+                        echo "<div class='col-3'>";
+                        echo "<form method='POST' action=''>";
+                        echo "<input type='hidden' name='product_name' value='". $row['product_name'] . "'>";
+                        echo "<input type='hidden' name='product_image' value='". $row['product_image'] . "'>";
+                        echo "<input type='hidden' name='product_id' value='". $row['product_id'] . "'>";
+                        echo "<input type='hidden' name='quantity' value='1'>";
+                        echo "<input type='hidden' name='product_price' value='" . $row['product_price'] ."'>";
+
+                        echo "<a href='product_details.php?product_id=" . $row['product_id'] . "' style='text-decoration: none; color: inherit;'>";
+                        
+                        echo "<div class='card'>";
+                        echo "<div class='product-image-container'>";
+                        echo "<img src='" . $row['product_image'] . "' alt='" . $row['product_name'] . "' class='product-image'>";
+                        echo "<div class='add-to-cart-overlay'>";
+                        echo "<button type='submit' name='add_to_cart' class='add-to-cart-btn' value='Add to Cart'>Add to Cart</button>";
+                        echo "</div></div>";
+                        echo "<div class='card-body'>";
+                        echo "<h2 class='card-title'>" . $row['product_name'] . "</h2>";
+                        displayrating(number_format($row['product_rating'], 1));
+                        echo "<p class='card-price'>$" . number_format($row['product_price'], 2) . "</p>";
+                        echo "</div>";
+                        
+                        echo "</div>";
+                        echo "</form>";
+                        echo "</div>";
+                    }
+                } else {
+                    echo "<p>No products found.</p>";
+                }
+
+                // Handle Add to Cart submission
+                if (isset($_POST['add_to_cart'])) {
+                    $product_id = $_POST['product_id'];
+                    $quantity = $_POST['quantity'];
+                    $product_price = $_POST['product_price'];
+                    $total_price = $quantity * $product_price;
+
+                    // Initialize the cart in the session if it doesn't exist
+                    if (!isset($_SESSION['cart'])) {
+                        $_SESSION['cart'] = [];
+                    }
+
+                    // Check if the product already exists in the cart
+                    if (isset($_SESSION['cart'][$product_id])) {
+                        // Update the existing item
+                        $_SESSION['cart'][$product_id]['quantity'] += $quantity;
+                        $_SESSION['cart'][$product_id]['total_price'] += $total_price;
+                    } else {
+                        // Add a new item to the cart
+                        $_SESSION['cart'][$product_id] = [
+                            'product_id' => $product_id,
+                            'quantity' => $quantity,
+                            'total_price' => $total_price,
+                            'product_price' => $product_price,
+                            'product_name' => $_POST['product_name'],
+                            'product_image' => $_POST['product_image'],
+                        ];
+                    }
+
+                    echo "<script>
+                            alert('Item successfully added to cart!');
+                            window.location.href = 'cart.php?';
+                        </script>";
+                }
+
+                // Close the database connection
+                $conn->close();
+                ?>       
+            </div>
+            <div class="row" style="justify-content:end;">
+                <a href="product_page.php" class="showmore">show more >>></a>
             </div>
 
         </div>

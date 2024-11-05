@@ -10,15 +10,6 @@ CREATE TABLE perfumes (
     gender VARCHAR(10) NOT NULL
 );
 
-CREATE TABLE cart (
-    cart_id INT AUTO_INCREMENT PRIMARY KEY,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL,
-    total_price DECIMAL(10, 2) NOT NULL,
-    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (product_id) REFERENCES perfumes(product_id) ON DELETE CASCADE
-);
-
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
